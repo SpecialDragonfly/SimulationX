@@ -1,0 +1,8 @@
+.idea/
+
+## File-based project format:
+*.iws
+
+.*
+!.git*
+!.editorconfig
