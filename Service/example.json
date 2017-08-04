@@ -1,16 +1,13 @@
 {
   "accepts":[
     {
-      "type": "bar",
-      "count": 4
+      "type": "bar"
     },
     {
-      "type": "baz",
-      "count": 2
+      "type": "baz"
     },
     {
-      "type": "foz",
-      "count": 4
+      "type": "foz"
     }
   ],
   "provides":[
@@ -27,6 +24,18 @@
         {
           "type": "baz",
           "count": 2
+        }
+      ]
+    },
+    {
+      "resource": {
+        "type": "zeb",
+        "count": 4
+      },
+      "given":[
+        {
+          "type": "foz",
+          "count": 1
         }
       ]
     }
