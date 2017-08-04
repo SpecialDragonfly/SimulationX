@@ -1,0 +1,34 @@
+{
+  "accepts":[
+    {
+      "type": "bar",
+      "count": 4
+    },
+    {
+      "type": "baz",
+      "count": 2
+    },
+    {
+      "type": "foz",
+      "count": 4
+    }
+  ],
+  "provides":[
+    {
+      "resource": {
+        "type": "foo",
+        "count": 2
+      },
+      "given":[
+        {
+          "type": "bar",
+          "count": 4
+        },
+        {
+          "type": "baz",
+          "count": 2
+        }
+      ]
+    }
+  ]
+}
