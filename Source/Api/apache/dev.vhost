@@ -1,0 +1,13 @@
+Listen 8090
+
+<VirtualHost *:8090>
+    ServerName 127.0.0.1
+    DocumentRoot /var/www/html/public
+    DirectoryIndex index.php
+
+    <Directory "/var/www/html/public">
+            AllowOverride All
+    </Directory>
+
+    RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+</VirtualHost>
