@@ -1,0 +1,86 @@
+{
+  "id": "c137749d-87db-4bf1-bb99-57ebc220c7c3",
+  "actors": [
+    {
+
+      "coords": {
+        "x": 13544,
+        "y": 56431,
+        "z": 0
+      },
+      "bucket": [
+        {
+          "type": "brapples",
+          "count": 56
+        },
+        {
+          "type": "bobbish",
+          "count": 3
+        },
+        {
+          "type": "plumbus",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "46adc6d2-d1f5-4610-a2cf-9a3748f5de02",
+      "coords": {
+        "x": 42980,
+        "y": 42200,
+        "z": 0
+      },
+      "bucket": [
+        {
+          "type": "brapples",
+          "count": 32
+        },
+        {
+          "type": "fleeb",
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bd4e53fc-990d-4d53-b144-523274dc80d9",
+      "coords": {
+        "x": 42980,
+        "y": 42200,
+        "z": 0
+      },
+      "type": "brapples"
+    }
+  ],
+  "services": [
+    {
+      "id": "e9ff5c88-8e96-4188-8f82-5cd8da1bb14e",
+      "coords": {
+        "x": 51943,
+        "y": -29951,
+        "z": 0
+      },
+      "exchanges": [
+        {
+          "in": {
+            "type": "brapples",
+            "count": 5
+          },
+          "out": {
+            "type": "bobbish"
+          }
+        },
+        {
+          "in": {
+            "type": "brapples",
+            "count": 2
+          },
+          "out": {
+            "type": "fleeb"
+          }
+        }
+      ]
+    }
+  ]
+}
