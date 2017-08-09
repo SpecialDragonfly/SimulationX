@@ -3,7 +3,7 @@ package Engine;
 /**
  * Creates a singular instance of any Sink/Source/Service that it knows about
  */
-public class SimpleEngineStrategy {
+public class SimpleEngineStrategy implements EngineStrategy {
     public void verifyObjects() {
         // Verify that Sinks/Sources/Services still exist.
     }
