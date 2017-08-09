@@ -1,0 +1,8 @@
+version: "2"
+services:
+  php_apache:
+    build: .
+    volumes:
+      - ./Api:/var/www/html/
+    ports:
+      - 8090:8090
