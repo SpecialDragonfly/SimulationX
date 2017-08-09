@@ -30,6 +30,8 @@ public class GetDetailsServlet extends HttpServlet {
 
     private String getStatus() {
         EngineStrategy strategy = (EngineStrategy) this.engine.getEngineStrategy();
+        ArrayList<ServiceDTO> serviceList= strategy.getServiceDTOArray();
+
         JSONObject json = new JSONObject();
         json.append("hello", "world");
         return json.toString();

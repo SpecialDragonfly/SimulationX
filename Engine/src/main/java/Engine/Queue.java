@@ -1,12 +1,13 @@
 package Engine;
 
 import Engine.Events.Event;
+import Engine.Events.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-class Queue {
+public class Queue {
     private ConcurrentLinkedQueue<Event> tasks = null;
     private HashMap<String, Engine> subscribedEngines = null;
     private HashMap<String, ArrayList<EnvironmentObject>> subscribedEnvironmentObjects = null;
@@ -49,5 +50,9 @@ class Queue {
             a.add(object);
             this.subscribedEnvironmentObjects.put(eventName, a);
         }
+    }
+
+    public void add(RegisterEvent event) {
+
     }
 }

@@ -9,6 +9,7 @@ import static java.lang.Thread.sleep;
 public class Engine implements Runnable {
 
     private final Queue queue;
+    private final Queue registrationQueue;
     private final SimpleEngineStrategy engineStrategy;
     private long tickLimit = 0;
 
@@ -19,6 +20,7 @@ public class Engine implements Runnable {
 
     public Engine(long tickLimit) {
         this.queue = new Queue();
+        this.registrationQueue = new Queue();
         this.tickLimit = tickLimit;
         this.engineStrategy = new SimpleEngineStrategy();
     }
@@ -35,6 +37,8 @@ public class Engine implements Runnable {
     @Override
     public void run() {
         this.queue.subscribe("TickEvent", this);
+        this.registrationQueue.subscribe("RegisterEvent", this.engineStrategy);
+
         StatusServer statusServer = new StatusServer(new Server(8000));
         statusServer.addServlet(new GetDetailsServlet(this), "/status/*");
         statusServer.run();
