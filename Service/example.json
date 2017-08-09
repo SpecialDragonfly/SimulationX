@@ -1,43 +1,25 @@
 {
-  "accepts":[
+  "action":"http://service.com/action",
+  "status":"http://service.com/status",
+  "health":"http://service.com/health",
+  "exchanges": [
     {
-      "type": "bar"
+      "in": {
+        "type": "brapples",
+        "count": 5
+      },
+      "out": {
+        "type": "bobbish"
+      }
     },
     {
-      "type": "baz"
-    },
-    {
-      "type": "foz"
-    }
-  ],
-  "provides":[
-    {
-      "resource": {
-        "type": "foo",
+      "in": {
+        "type": "brapples",
         "count": 2
       },
-      "given":[
-        {
-          "type": "bar",
-          "count": 4
-        },
-        {
-          "type": "baz",
-          "count": 2
-        }
-      ]
-    },
-    {
-      "resource": {
-        "type": "zeb",
-        "count": 4
-      },
-      "given":[
-        {
-          "type": "foz",
-          "count": 1
-        }
-      ]
+      "out": {
+        "type": "fleeb"
+      }
     }
   ]
 }
