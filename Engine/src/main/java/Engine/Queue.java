@@ -1,7 +1,6 @@
 package Engine;
 
 import Engine.Events.Event;
-import Engine.Events.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,9 +55,5 @@ public class Queue {
 
     public void subscribe(String eventName, EngineStrategy strategy) {
         this.subscribedStrategies.put(eventName, strategy);
-    }
-    
-    public void add(RegisterEvent event) {
-
     }
 }

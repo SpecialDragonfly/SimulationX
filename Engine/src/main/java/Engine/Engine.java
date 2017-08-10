@@ -6,7 +6,7 @@ import org.eclipse.jetty.server.Server;
 
 import static java.lang.Thread.sleep;
 
-public class Engine implements Runnable {
+public class Engine implements Runnable, QueueListener {
 
     private final Queue queue;
     private final Queue registrationQueue;

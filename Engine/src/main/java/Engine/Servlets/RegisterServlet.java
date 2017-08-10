@@ -23,7 +23,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        this.queue.add(new RegisterEvent(this.getBody(httpServletRequest)));
+        this.queue.push(new RegisterEvent(this.getBody(httpServletRequest)));
     }
 
     private String getBody(HttpServletRequest request) {

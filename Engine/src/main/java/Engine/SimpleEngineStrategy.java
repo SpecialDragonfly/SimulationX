@@ -1,5 +1,6 @@
 package Engine;
 
+import Engine.Events.Event;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,7 +26,8 @@ public class SimpleEngineStrategy implements EngineStrategy {
         return this.serviceDTOArray;
     }
 
-    public void handle(String serviceJSON) {
+    public void handle(Event event) {
+        String serviceJSON = event.getMessage();
 
         JSONObject jsonObject = new JSONObject(serviceJSON);
         String actionUrl = jsonObject.getString("action_url");
