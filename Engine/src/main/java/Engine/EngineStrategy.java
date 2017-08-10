@@ -1,7 +1,9 @@
 package Engine;
 
+import java.util.ArrayList;
+
 public interface EngineStrategy {
     void verifyObjects();
     void update();
-    void getServiceDTOArray();
+    ArrayList<ServiceDTO> getServiceDTOArray();
 }

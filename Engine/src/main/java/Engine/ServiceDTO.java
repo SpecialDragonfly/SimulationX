@@ -2,9 +2,6 @@ package Engine;
 
 import java.util.HashMap;
 
-/**
- * @author Jeremy Frenay <jeremy.frenay@worldfirst.com>
- */
 public class ServiceDTO {
 
     private final String actionUrl;
@@ -18,5 +15,21 @@ public class ServiceDTO {
         this.statusUrl = statusUrl;
         this.healthcheckUrl = healthcheckUrl;
         this.resourceMap = resourceMap;
+    }
+
+    public String getActionUrl() {
+        return actionUrl;
+    }
+
+    public String getStatusUrl() {
+        return statusUrl;
+    }
+
+    public String getHealthcheckUrl() {
+        return healthcheckUrl;
+    }
+
+    public HashMap<String, String> getResourceMap() {
+        return resourceMap;
     }
 }

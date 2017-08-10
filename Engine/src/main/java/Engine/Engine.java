@@ -10,7 +10,7 @@ public class Engine implements Runnable {
 
     private final Queue queue;
     private final Queue registrationQueue;
-    private final SimpleEngineStrategy engineStrategy;
+    private final EngineStrategy engineStrategy;
     private long tickLimit = 0;
 
     public static void main(String[] args) {
@@ -30,17 +30,13 @@ public class Engine implements Runnable {
         System.out.println("The engine ticked!");
     }
 
-    public EngineStrategy getEngineStrategy() {
-        return this.engineStrategy;
-    }
-
     @Override
     public void run() {
         this.queue.subscribe("TickEvent", this);
         this.registrationQueue.subscribe("RegisterEvent", this.engineStrategy);
 
         StatusServer statusServer = new StatusServer(new Server(8000));
-        statusServer.addServlet(new GetDetailsServlet(this), "/status/*");
+        statusServer.addServlet(new GetDetailsServlet(this.engineStrategy), "/status/*");
         statusServer.run();
 
         long count = 0;

@@ -1,6 +1,5 @@
 package Engine.Servlets;
 
-import Engine.Engine;
 import Engine.EngineStrategy;
 import org.json.JSONObject;
 
@@ -9,12 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GetDetailsServlet extends HttpServlet {
-    private Engine engine;
+    private Engine.EngineStrategy strategy;
 
-    public GetDetailsServlet(Engine engine) {
-        this.engine = engine;
+    public GetDetailsServlet(EngineStrategy strategy) {
+        this.strategy = strategy;
     }
 
     @Override
@@ -29,11 +29,10 @@ public class GetDetailsServlet extends HttpServlet {
     }
 
     private String getStatus() {
-        EngineStrategy strategy = (EngineStrategy) this.engine.getEngineStrategy();
-        ArrayList<ServiceDTO> serviceList= strategy.getServiceDTOArray();
+        ArrayList serviceList = this.strategy.getServiceDTOArray();
 
         JSONObject json = new JSONObject();
-        json.append("hello", "world");
+        json.append("services", serviceList);
         return json.toString();
     }
 }
