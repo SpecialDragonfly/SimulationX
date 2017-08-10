@@ -22,7 +22,7 @@ public class Engine implements Runnable, QueueListener {
         this.queue = new Queue();
         this.registrationQueue = new Queue();
         this.tickLimit = tickLimit;
-        this.engineStrategy = new SimpleEngineStrategy();
+        this.engineStrategy = new SimpleEngineStrategy(new PlanarEnvironment());
     }
 
     public void handle(Event event) {
@@ -41,7 +41,7 @@ public class Engine implements Runnable, QueueListener {
 
         long count = 0;
         while (count < this.tickLimit) {
-            // Do all Environment Objects still respond when poked?
+            // Do all PlanarEnvironment Objects still respond when poked?
             this.engineStrategy.verifyObjects();
 
             // Do we have any more environment objects that need to be instantiated (or removed)

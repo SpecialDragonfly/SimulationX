@@ -13,13 +13,27 @@ import java.util.HashMap;
 public class SimpleEngineStrategy implements EngineStrategy {
 
     private ArrayList<ServiceDTO> serviceDTOArray = new ArrayList<ServiceDTO>();
+    private Environment environment = new PlanarEnvironment();
+
+    public SimpleEngineStrategy(Environment environment) {
+        this.environment = environment;
+    }
 
     public void verifyObjects() {
-        // Verify that Sinks/Sources/Services still exist.
+        ArrayList<ServiceDTO> aliveServices = new ArrayList<>();
+        this.serviceDTOArray.forEach(x -> {
+            boolean alive = this.doHealthCheck(x.getHealthcheckUrl());
+            if (alive) {
+                aliveServices.add(x);
+            }
+        });
+        this.serviceDTOArray = aliveServices;
     }
 
     public void update() {
         // If any new Sinks/Source/Service have registered themselves then make a singular instance of them.
+        ServiceDTO service = new ServiceDTO("a", "b", "c", new HashMap<>());
+        this.environment.add(service);
     }
 
     public ArrayList<ServiceDTO> getServiceDTOArray() {
@@ -42,5 +56,11 @@ public class SimpleEngineStrategy implements EngineStrategy {
         }
 
         this.serviceDTOArray.add(new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap));
+    }
+
+    private boolean doHealthCheck(String url) {
+        // Calls the url.
+
+        return true;
     }
 }
