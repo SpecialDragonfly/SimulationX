@@ -1,11 +1,13 @@
 package Engine;
 
+import Engine.Mapping.IService;
+
 import java.util.HashMap;
 
 /**
  * @author Jeremy Frenay <jeremy.frenay@worldfirst.com>
  */
-public class ServiceDTO implements IService{
+public class ServiceDTO implements IService {
 
     private final String actionUrl;
     private final String statusUrl;
@@ -18,6 +20,18 @@ public class ServiceDTO implements IService{
         this.statusUrl = statusUrl;
         this.healthcheckUrl = healthcheckUrl;
         this.resourceMap = resourceMap;
+    }
+
+    public String getActionUrl() {
+        return actionUrl;
+    }
+
+    public String getStatusUrl() {
+        return statusUrl;
+    }
+
+    public String getHealthcheckUrl() {
+        return healthcheckUrl;
     }
 
     public HashMap<String, String> getResourceMap() {

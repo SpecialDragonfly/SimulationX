@@ -1,4 +1,6 @@
-package Engine;
+package Engine.Mapping;
+
+import Engine.Engine;
 
 import java.util.HashMap;
 

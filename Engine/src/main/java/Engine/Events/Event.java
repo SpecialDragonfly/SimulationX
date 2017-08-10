@@ -1,3 +1,5 @@
 package Engine.Events;
 
-public interface Event {}
+public interface Event {
+    String getMessage();
+}

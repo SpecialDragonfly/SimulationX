@@ -1,7 +1,6 @@
 package Engine;
 
 import Engine.Events.Event;
-import Engine.Events.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +10,13 @@ public class Queue {
     private ConcurrentLinkedQueue<Event> tasks = null;
     private HashMap<String, Engine> subscribedEngines = null;
     private HashMap<String, ArrayList<EnvironmentObject>> subscribedEnvironmentObjects = null;
+    private HashMap<String, EngineStrategy> subscribedStrategies = null;
 
     public Queue() {
         this.tasks = new ConcurrentLinkedQueue<>();
         this.subscribedEngines = new HashMap<>();
         this.subscribedEnvironmentObjects = new HashMap<>();
+        this.subscribedStrategies = new HashMap<>();
     }
 
     public void push(Event event) {
@@ -52,7 +53,7 @@ public class Queue {
         }
     }
 
-    public void add(RegisterEvent event) {
-
+    public void subscribe(String eventName, EngineStrategy strategy) {
+        this.subscribedStrategies.put(eventName, strategy);
     }
 }

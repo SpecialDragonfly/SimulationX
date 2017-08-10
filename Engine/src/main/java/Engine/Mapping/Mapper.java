@@ -1,4 +1,6 @@
-package Engine;
+package Engine.Mapping;
+
+import Engine.ServiceDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,9 +25,9 @@ public class Mapper implements IMapper {
         this.origin.put("x", Math.toIntExact(Math.round(width * 0.5)));
         this.origin.put("y", Math.toIntExact(Math.round(height * 0.5)));
         this.origin.put("z", Math.toIntExact(Math.round(depth * 0.5)));
-        this.sources = new ArrayList<IMappedSource>();
-        this.sinks = new ArrayList<IMappedSink>();
-        this.services = new ArrayList<IMappedService>();
+        this.sources = new ArrayList<>();
+        this.sinks = new ArrayList<>();
+        this.services = new ArrayList<>();
     }
 
     public void addSource(ISource source, int instances) {
@@ -45,6 +47,11 @@ public class Mapper implements IMapper {
         for (int i = 0; i < instances ; i++) {
             this.services.add(new MappedService(this.getPos("x") , this.getPos("y"), 0, service));
         }
+    }
+
+    @Override
+    public void removeService(ServiceDTO x) {
+        // The service wasn't responsive, so now needs to be removed from the map.
     }
 
     protected Integer getPos(String dimension) {

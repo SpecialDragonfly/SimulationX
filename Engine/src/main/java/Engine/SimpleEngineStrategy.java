@@ -1,5 +1,8 @@
 package Engine;
 
+import Engine.Events.Event;
+import Engine.Mapping.IMapper;
+import Engine.Mapping.IService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,37 +14,57 @@ import java.util.HashMap;
  */
 public class SimpleEngineStrategy implements EngineStrategy {
 
+    private final IMapper mapper;
     private ArrayList<ServiceDTO> serviceDTOArray = new ArrayList<ServiceDTO>();
     private ArrayList<String> resourceTypes = new ArrayList<>();
 
-    public SimpleEngineStrategy(ArrayList<String> resourceTypes) {
-        this.resourceTypes = resourceTypes;
+    public SimpleEngineStrategy(IMapper mapper) {
+        this.mapper = mapper;
     }
 
     public void verifyObjects() {
         // Verify that Sinks/Sources/Services still exist.
+        ArrayList<ServiceDTO> aliveServices = new ArrayList<>();
+        this.serviceDTOArray.forEach(x -> {
+            boolean alive = this.doHealthCheck(x.getHealthcheckUrl());
+            if (alive) {
+                aliveServices.add(x);
+            } else {
+                this.mapper.removeService(x);
+            }
+        });
+        this.serviceDTOArray = aliveServices;
     }
 
     public void update(IService serviceDTO) {
         // If any new Sinks/Source/Service have registered themselves then make a singular(?) instance of them.
+        this.mapper.addService(serviceDTO, 1);
     }
 
     public ArrayList<ServiceDTO> getServiceDTOArray() {
         return this.serviceDTOArray;
     }
 
-    public void handleServiceRegistration(String serviceRequest) {
-        JSONObject service = new JSONObject(serviceRequest);
-        ServiceDTO serviceDTO = new ServiceDTO(
-                service.get("actionUrl").toString(),
-                service.get("statusUrl").toString(),
-                service.get("healthUrl").toString(),
-                getServiceExchangeMap(service)
-        );
-        this.serviceDTOArray.add(
-            serviceDTO
-        );
-        this.update(serviceDTO);
+    public void handle(Event event) {
+        String serviceJSON = event.getMessage();
+
+        JSONObject jsonObject = new JSONObject(serviceJSON);
+        String actionUrl = jsonObject.getString("action_url");
+        String statusUrl = jsonObject.getString("status_url");
+        String healthcheckUrl = jsonObject.getString("healthcheck_url");
+        HashMap<String, String> resourceMap = this.getServiceExchangeMap(jsonObject);
+        JSONArray resourceArray = jsonObject.getJSONArray("resources");
+        for (int i = 0; i < resourceArray.length(); i++) {
+            String input = resourceArray.getJSONObject(i).getString("input");
+            String output = resourceArray.getJSONObject(i).getString("output");
+            resourceMap.put(input, output);
+        }
+
+        ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap);
+        this.serviceDTOArray.add(service);
+        this.update(service);
+
+
     }
 
     private HashMap<String, String> getServiceExchangeMap(JSONObject service) {
@@ -63,5 +86,11 @@ public class SimpleEngineStrategy implements EngineStrategy {
         }
 
         return exchangeMap;
+    }
+
+    private boolean doHealthCheck(String url) {
+        // Calls the url.
+
+        return true;
     }
 }

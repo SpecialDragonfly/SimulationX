@@ -1,24 +1,23 @@
-package Engine;
+package Engine.Mapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
-public class MappedSource implements IMappedSource {
-
+public class MappedSink implements IMappedSink {
     private HashMap<String,Integer> coOrdinates;
-    private ISource source;
+    private ISink sink;
 
-    public MappedSource(Integer x, Integer y, Integer z, ISource source) {
+    public MappedSink(Integer x, Integer y, Integer z, ISink sink) {
         this.coOrdinates = new HashMap<>();
         this.coOrdinates.put("x", x);
         this.coOrdinates.put("y", y);
         this.coOrdinates.put("z", z);
-        this.source = source;
+        this.sink = sink;
     }
 
     @Override
-    public Set<String> getOutputs() {
-        return this.source.getOutputs();
+    public ArrayList<String> getInputs() {
+        return this.sink.getInputs();
     }
 
     @Override
