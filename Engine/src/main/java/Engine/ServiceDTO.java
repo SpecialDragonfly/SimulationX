@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * @author Jeremy Frenay <jeremy.frenay@worldfirst.com>
  */
-public class ServiceDTO {
+public class ServiceDTO implements IService{
 
     private final String actionUrl;
     private final String statusUrl;
@@ -18,5 +18,9 @@ public class ServiceDTO {
         this.statusUrl = statusUrl;
         this.healthcheckUrl = healthcheckUrl;
         this.resourceMap = resourceMap;
+    }
+
+    public HashMap<String, String> getResourceMap() {
+        return resourceMap;
     }
 }
