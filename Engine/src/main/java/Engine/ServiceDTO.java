@@ -1,9 +1,13 @@
 package Engine;
 
+import Engine.Mapping.IService;
+
 import java.util.HashMap;
 
-public class ServiceDTO {
-
+/**
+ * @author Jeremy Frenay <jeremy.frenay@worldfirst.com>
+ */
+public class ServiceDTO implements IService {
     private final String actionUrl;
     private final String statusUrl;
     private final String healthcheckUrl;

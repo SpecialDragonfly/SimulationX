@@ -1,6 +1,8 @@
 package Engine;
 
 import Engine.Events.Event;
+import Engine.Mapping.IMapper;
+import Engine.Mapping.IService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,28 +14,31 @@ import java.util.HashMap;
  */
 public class SimpleEngineStrategy implements EngineStrategy {
 
+    private final IMapper mapper;
     private ArrayList<ServiceDTO> serviceDTOArray = new ArrayList<ServiceDTO>();
-    private Environment environment = new PlanarEnvironment();
+    private ArrayList<String> resourceTypes = new ArrayList<>();
 
-    public SimpleEngineStrategy(Environment environment) {
-        this.environment = environment;
+    public SimpleEngineStrategy(IMapper mapper) {
+        this.mapper = mapper;
     }
 
     public void verifyObjects() {
+        // Verify that Sinks/Sources/Services still exist.
         ArrayList<ServiceDTO> aliveServices = new ArrayList<>();
         this.serviceDTOArray.forEach(x -> {
             boolean alive = this.doHealthCheck(x.getHealthcheckUrl());
             if (alive) {
                 aliveServices.add(x);
+            } else {
+                this.mapper.removeService(x);
             }
         });
         this.serviceDTOArray = aliveServices;
     }
 
-    public void update() {
-        // If any new Sinks/Source/Service have registered themselves then make a singular instance of them.
-        ServiceDTO service = new ServiceDTO("a", "b", "c", new HashMap<>());
-        this.environment.add(service);
+    public void update(IService serviceDTO) {
+        // If any new Sinks/Source/Service have registered themselves then make a singular(?) instance of them.
+        this.mapper.addService(serviceDTO, 1);
     }
 
     public ArrayList<ServiceDTO> getServiceDTOArray() {
@@ -47,7 +52,9 @@ public class SimpleEngineStrategy implements EngineStrategy {
         String actionUrl = jsonObject.getString("action_url");
         String statusUrl = jsonObject.getString("status_url");
         String healthcheckUrl = jsonObject.getString("healthcheck_url");
-        HashMap<String, String> resourceMap = new HashMap<>();
+
+        HashMap<String, String> resourceMap = this.getServiceExchangeMap(jsonObject);
+
         JSONArray resourceArray = jsonObject.getJSONArray("resources");
         for (int i = 0; i < resourceArray.length(); i++) {
             String input = resourceArray.getJSONObject(i).getString("input");
@@ -55,7 +62,30 @@ public class SimpleEngineStrategy implements EngineStrategy {
             resourceMap.put(input, output);
         }
 
-        this.serviceDTOArray.add(new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap));
+        ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap);
+        this.serviceDTOArray.add(service);
+        this.update(service);
+    }
+
+    private HashMap<String, String> getServiceExchangeMap(JSONObject service) {
+        HashMap<String, String> exchangeMap = new HashMap<>();
+        JSONArray exchangeData = service.getJSONArray("exchanges");
+        for (int i = 0; i < exchangeData.length(); i++) {
+            JSONObject exchange = exchangeData.getJSONObject(i);
+            JSONObject input = exchange.getJSONObject("in");
+            JSONObject output = exchange.getJSONObject("out");
+            String inputType = input.get("type").toString();
+            String outputType = output.get("type").toString();
+            if (!this.resourceTypes.contains(inputType)) {
+                continue;
+            }
+            if (!this.resourceTypes.contains(outputType)) {
+                this.resourceTypes.add(outputType);
+            }
+            exchangeMap.put(inputType,outputType);
+        }
+
+        return exchangeMap;
     }
 
     private boolean doHealthCheck(String url) {

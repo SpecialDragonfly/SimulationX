@@ -1,6 +1,7 @@
 package Engine;
 
 import Engine.Events.Event;
+import Engine.Mapping.Mapper;
 import Engine.Servlets.GetDetailsServlet;
 import org.eclipse.jetty.server.Server;
 
@@ -22,7 +23,7 @@ public class Engine implements Runnable, QueueListener {
         this.queue = new Queue();
         this.registrationQueue = new Queue();
         this.tickLimit = tickLimit;
-        this.engineStrategy = new SimpleEngineStrategy(new PlanarEnvironment());
+        this.engineStrategy = new SimpleEngineStrategy(new Mapper(3, 3, 0));
     }
 
     public void handle(Event event) {
@@ -43,9 +44,6 @@ public class Engine implements Runnable, QueueListener {
         while (count < this.tickLimit) {
             // Do all PlanarEnvironment Objects still respond when poked?
             this.engineStrategy.verifyObjects();
-
-            // Do we have any more environment objects that need to be instantiated (or removed)
-            this.engineStrategy.update();
 
             // We've ticked, so tell anything that cares.
             this.queue.push(new Engine.Events.TickEvent());
