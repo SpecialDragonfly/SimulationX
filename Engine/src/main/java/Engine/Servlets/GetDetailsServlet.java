@@ -49,7 +49,7 @@ public class GetDetailsServlet extends HttpServlet {
         sources.forEach(s -> {
             HashMap<String, Integer> coordinates = s.getCoOrdinates();
             JSONObject serviceObject = new JSONObject();
-            serviceObject.put("id", s.getClass().toGenericString());
+            serviceObject.put("id", s.getUUID().toString());
             serviceObject.put("type", "something");
             serviceObject.put("x", coordinates.get("x"));
             serviceObject.put("y", coordinates.get("y"));
@@ -60,7 +60,7 @@ public class GetDetailsServlet extends HttpServlet {
         sinks.forEach(s -> {
             HashMap<String, Integer> coordinates = s.getCoOrdinates();
             JSONObject serviceObject = new JSONObject();
-            serviceObject.put("id", s.getClass().toGenericString());
+            serviceObject.put("id", s.getUUID().toString());
             serviceObject.put("type", "something");
             serviceObject.put("x", coordinates.get("x"));
             serviceObject.put("y", coordinates.get("y"));
@@ -71,7 +71,7 @@ public class GetDetailsServlet extends HttpServlet {
         services.forEach(s -> {
             HashMap<String, Integer> coordinates = s.getCoOrdinates();
             JSONObject serviceObject = new JSONObject();
-            serviceObject.put("id", s.getClass().toGenericString());
+            serviceObject.put("id", s.getUUID().toString());
             serviceObject.put("type", "something");
             serviceObject.put("x", coordinates.get("x"));
             serviceObject.put("y", coordinates.get("y"));
