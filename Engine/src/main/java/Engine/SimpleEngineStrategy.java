@@ -1,6 +1,9 @@
 package Engine;
 
 import Engine.Events.Event;
+import Engine.Events.RegisterEvent;
+import Engine.Events.TickEvent;
+import Engine.Mapping.IMappedService;
 import Engine.Mapping.IMapper;
 import Engine.Mapping.IService;
 import org.json.JSONArray;
@@ -31,9 +34,10 @@ public class SimpleEngineStrategy implements EngineStrategy {
         this.serviceDTOArray.forEach(x -> {
             boolean alive = false;
             try {
-                alive = this.doHealthCheck(x.getHealthcheckUrl());
+                alive = this.doHealthCheck("http://" + x.getHealthcheckUrl());
             } catch (IOException ex) {
-                // Do nothing
+                System.out.println("An exception happened.");
+                System.out.println(ex.getMessage());
             }
 
             if (alive) {
@@ -55,35 +59,44 @@ public class SimpleEngineStrategy implements EngineStrategy {
         return this.mapper;
     }
 
+    @Override
+    public IMappedService getServiceByUUID(String uuid) throws Exception {
+        return this.mapper.getServiceByUUID(uuid);
+    }
+
     public void handle(Event event) {
-        System.out.println("The Simple Engine strategy has taken an item off the queue");
-        String serviceJSON = event.getMessage();
-        System.out.println(serviceJSON);
-        JSONObject jsonObject = new JSONObject(serviceJSON);
-        String actionUrl = jsonObject.getString("action_url");
-        String statusUrl = jsonObject.getString("status_url");
-        String healthcheckUrl = jsonObject.getString("healthcheck_url");
+        if (event instanceof RegisterEvent) {
+            String serviceJSON = event.getMessage();
+            System.out.println(serviceJSON);
+            JSONObject jsonObject = new JSONObject(serviceJSON);
+            String actionUrl = jsonObject.getString("action_url");
+            String statusUrl = jsonObject.getString("status_url");
+            String healthcheckUrl = jsonObject.getString("healthcheck_url");
 
-        HashMap<String, String> resourceMap = new HashMap<>(); //this.getServiceExchangeMap(jsonObject);
-        HashMap<HashMap<String, String>, Integer> serviceExchangeRates = new HashMap<>();
+            HashMap<String, String> resourceMap = new HashMap<>(); //this.getServiceExchangeMap(jsonObject);
+            HashMap<HashMap<String, String>, Integer> serviceExchangeRates = new HashMap<>();
 
-        JSONArray resourceArray = jsonObject.getJSONArray("resources");
-        for (int i = 0; i < resourceArray.length(); i++) {
-            String input = resourceArray.getJSONObject(i).getString("input");
-            String output = resourceArray.getJSONObject(i).getString("output");
-            int exchangeRate = resourceArray.getJSONObject(i).getInt("exchange_rate");
-            resourceMap.put(input, output);
-            serviceExchangeRates.put(resourceMap, exchangeRate);
+            JSONArray resourceArray = jsonObject.getJSONArray("resources");
+            for (int i = 0; i < resourceArray.length(); i++) {
+                String input = resourceArray.getJSONObject(i).getString("input");
+                String output = resourceArray.getJSONObject(i).getString("output");
+                int exchangeRate = resourceArray.getJSONObject(i).getInt("exchange_rate");
+                resourceMap.put(input, output);
+                serviceExchangeRates.put(resourceMap, exchangeRate);
+            }
+
+            ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, serviceExchangeRates);
+            this.serviceDTOArray.add(service);
+            this.update(service);
+        } else if (event instanceof TickEvent) {
+            this.verifyObjects();
         }
-
-        ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, serviceExchangeRates);
-        this.serviceDTOArray.add(service);
-        this.update(service);
     }
 
     private boolean doHealthCheck(String url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.connect();
-        return connection.getResponseCode() == 200;
+        int responseCode = connection.getResponseCode();
+        return responseCode == 200;
     }
 }

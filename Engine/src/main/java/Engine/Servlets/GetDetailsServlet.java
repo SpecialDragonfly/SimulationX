@@ -30,6 +30,7 @@ public class GetDetailsServlet extends HttpServlet {
     ) throws ServletException, IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType("application/json");
+        resp.addHeader("Access-Control-Allow-Origin", "*");
 
         resp.getWriter().print(this.getStatus());
     }
@@ -50,7 +51,7 @@ public class GetDetailsServlet extends HttpServlet {
             HashMap<String, Integer> coordinates = s.getCoOrdinates();
             JSONObject serviceObject = new JSONObject();
             serviceObject.put("id", s.getUUID().toString());
-            serviceObject.put("type", "something");
+            serviceObject.put("type", "source");
             serviceObject.put("x", coordinates.get("x"));
             serviceObject.put("y", coordinates.get("y"));
             serviceObject.put("z", coordinates.get("z"));
@@ -61,7 +62,7 @@ public class GetDetailsServlet extends HttpServlet {
             HashMap<String, Integer> coordinates = s.getCoOrdinates();
             JSONObject serviceObject = new JSONObject();
             serviceObject.put("id", s.getUUID().toString());
-            serviceObject.put("type", "something");
+            serviceObject.put("type", "sink");
             serviceObject.put("x", coordinates.get("x"));
             serviceObject.put("y", coordinates.get("y"));
             serviceObject.put("z", coordinates.get("z"));
@@ -72,12 +73,25 @@ public class GetDetailsServlet extends HttpServlet {
             HashMap<String, Integer> coordinates = s.getCoOrdinates();
             JSONObject serviceObject = new JSONObject();
             serviceObject.put("id", s.getUUID().toString());
-            serviceObject.put("type", "something");
+            serviceObject.put("type", "service");
             serviceObject.put("x", coordinates.get("x"));
             serviceObject.put("y", coordinates.get("y"));
             serviceObject.put("z", coordinates.get("z"));
             serviceArray.put(serviceObject);
         });
+
+        // TODO: Actors
+        /*
+            actors: [
+             { x, y, z },
+             { ... }
+            ],
+            current_actor: {
+              id: uuid,
+              x, y, z
+              bucket
+            }
+         */
 
         JSONObject json = new JSONObject();
         json.put("map", mapDetails);

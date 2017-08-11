@@ -18,6 +18,10 @@ public class MappedService implements IMappedService {
         this.uniqueId = UUID.randomUUID();
     }
 
+    public HashMap<HashMap<String, String>, Integer> getResourceMap() {
+        return resourceMap;
+    }
+
     public HashMap<String, Integer> getCoOrdinates() {
         return this.coOrdinates;
     }

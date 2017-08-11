@@ -78,6 +78,23 @@ public class Mapper implements IMapper {
         // The service wasn't responsive, so now needs to be removed from the map.
     }
 
+    @Override
+    public IMappedService getServiceByUUID(String uuid) throws Exception {
+        IMappedService service = null;
+
+        for (int i = 0; i < this.services.size(); i++) {
+            if (this.services.get(i).getUUID().toString().equals(uuid)) {
+                service = this.services.get(i);
+            }
+        }
+
+        if (service == null) {
+            throw new Exception("No Service found");
+        }
+
+        return service;
+    }
+
     protected Integer getPos(String dimension) {
         Random r = new Random();
 

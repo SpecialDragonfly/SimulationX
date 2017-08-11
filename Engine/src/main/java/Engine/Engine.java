@@ -4,6 +4,7 @@ import Engine.Events.Event;
 import Engine.Events.TickEvent;
 import Engine.Mapping.Mapper;
 import Engine.Servlets.GetDetailsServlet;
+import Engine.Servlets.GetStatusServlet;
 import Engine.Servlets.RegisterServlet;
 import org.eclipse.jetty.server.Server;
 
@@ -36,22 +37,21 @@ public class Engine implements Runnable, QueueListener {
     @Override
     public void run() {
         this.queue.subscribe("TickEvent", this);
+        this.queue.subscribe("TickEvent", this.engineStrategy);
         this.registrationQueue.subscribe("RegisterEvent", this.engineStrategy);
 
         StatusServer statusServer = new StatusServer(new Server(8005));
         statusServer.addServlet(new GetDetailsServlet(this.engineStrategy), "/status");
         statusServer.addServlet(new RegisterServlet(this.registrationQueue), "/register");
+        statusServer.addServlet(new GetStatusServlet(this.engineStrategy), "/x/*");
         statusServer.run();
 
         long count = 0;
         while (count < this.tickLimit) {
-            // Do all PlanarEnvironment Objects still respond when poked?
-            this.engineStrategy.verifyObjects();
-
             // We've ticked, so tell anything that cares.
             this.queue.push(new TickEvent());
             try {
-                sleep(1000 * 10);
+                sleep(1000 * 5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
