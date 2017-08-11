@@ -2,7 +2,7 @@ package Engine;
 
 import Engine.Events.Event;
 import Engine.Mapping.IMapper;
-import Engine.Mapping.IService;
+import Engine.DTO.IService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

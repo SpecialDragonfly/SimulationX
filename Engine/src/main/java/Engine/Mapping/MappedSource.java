@@ -1,5 +1,7 @@
 package Engine.Mapping;
 
+import Engine.DTO.ISource;
+
 import java.util.HashMap;
 import java.util.Set;
 

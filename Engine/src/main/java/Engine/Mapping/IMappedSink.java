@@ -1,7 +1,7 @@
 package Engine.Mapping;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 public interface IMappedSink extends IMapped{
-    public ArrayList<String> getInputs();
+    public Set<String> getInputs();
 }

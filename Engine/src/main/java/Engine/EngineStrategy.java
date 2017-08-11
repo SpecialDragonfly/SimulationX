@@ -1,7 +1,6 @@
 package Engine;
 
-import Engine.Mapping.IService;
-
+import Engine.DTO.IService;
 import java.util.ArrayList;
 
 public interface EngineStrategy extends QueueListener {

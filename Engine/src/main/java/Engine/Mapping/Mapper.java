@@ -1,5 +1,8 @@
 package Engine.Mapping;
 
+import Engine.DTO.IService;
+import Engine.DTO.ISink;
+import Engine.DTO.ISource;
 import Engine.ServiceDTO;
 
 import java.util.ArrayList;
@@ -32,20 +35,20 @@ public class Mapper implements IMapper {
 
     public void addSource(ISource source, int instances) {
         for (int i = 0; i < instances ; i++) {
-            this.sources.add(new MappedSource(this.getPos("x") , this.getPos("y"), 0, source));
+            this.sources.add(new MappedSource(this.getPos("x") , this.getPos("y"), this.getPos("z"), source));
         }
     }
 
     public void addSink(ISink sink, int instances) {
         for (int i = 0; i < instances ; i++) {
-            this.sinks.add(new MappedSink(this.getPos("x") , this.getPos("y"), 0, sink));
+            this.sinks.add(new MappedSink(this.getPos("x") , this.getPos("y"),this.getPos("z"), sink));
         }
     }
 
     @Override
     public void addService(IService service, int instances) {
         for (int i = 0; i < instances ; i++) {
-            this.services.add(new MappedService(this.getPos("x") , this.getPos("y"), 0, service));
+            this.services.add(new MappedService(this.getPos("x") , this.getPos("y"),this.getPos("z"), service));
         }
     }
 

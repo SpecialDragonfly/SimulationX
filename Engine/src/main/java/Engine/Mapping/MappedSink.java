@@ -1,5 +1,7 @@
 package Engine.Mapping;
 
+import Engine.DTO.ISink;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

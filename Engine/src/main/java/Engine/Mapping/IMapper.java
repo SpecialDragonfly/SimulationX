@@ -1,5 +1,6 @@
 package Engine.Mapping;
 
+import Engine.DTO.IService;
 import Engine.ServiceDTO;
 
 public interface IMapper {
