@@ -1,0 +1,18 @@
+{
+    "src": {
+        "name": "Wood",
+        "payload": {
+            "name": "wood",
+            "type": "pine",
+            "color": "brown"
+        }
+    },
+    "exchange": {
+        "name": "Coin",
+            "payload": {
+                "name": "coin",
+                "color": "gold"
+            }
+    },
+    "factor": 2
+}
