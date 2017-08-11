@@ -66,7 +66,9 @@ public class Mapper implements IMapper {
         return this.actors.get(uuid);
     }
 
-//    public MappedActor update
+    public MappedActor moveActor(UUID uuid, Integer x, Integer y, Integer z) {
+
+    }
 
     public void addSource(ISource source, int instances) {
         for (int i = 0; i < instances ; i++) {
@@ -96,6 +98,20 @@ public class Mapper implements IMapper {
     @Override
     public void removeService(ServiceDTO x) {
         // The service wasn't responsive, so now needs to be removed from the map.
+    }
+
+    @Override
+    public IMappedService getServiceByUUID(String uuid) throws Exception {
+        IMappedService service = null;
+        for (int i = 0; i < this.services.size(); i++) {
+            if (this.services.get(i).getUUID().toString().equals(uuid)) {
+                service = this.services.get(i);
+            }
+        }
+        if (service == null) {
+            throw new Exception("No Service found");
+        }
+        return service;
     }
 
     public void handleMove(MoveEvent event) {

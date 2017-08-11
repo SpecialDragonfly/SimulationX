@@ -26,6 +26,12 @@ public class MappedActor implements IMapped {
         return this.coOrdinates;
     }
 
+    public void move(Integer x, Integer y, Integer z) {
+        this.coOrdinates.put("x", x);
+        this.coOrdinates.put("y", y);
+        this.coOrdinates.put("z", z);
+    }
+
     public UUID getUUID() {
 
         return this.uniqueId;
@@ -43,7 +49,6 @@ public class MappedActor implements IMapped {
 
         if(this.bucket.containsKey(resourceType)) {
             numberOfItems += this.bucket.get(resourceType);
-            this.bucket.remove(resourceType);
         }
 
         this.bucket.put(resourceType, numberOfItems);
@@ -54,10 +59,7 @@ public class MappedActor implements IMapped {
         if(this.bucket.containsKey(resourceType)) {
             Integer itemsLeft = this.bucket.get(resourceType) - numberOfItems;
             itemsLeft = (itemsLeft < 0)? 0 : itemsLeft;
-            this.bucket.remove(resourceType);
             this.bucket.put(resourceType, itemsLeft);
-        } else {
-            this.bucket.put(resourceType, 0);
         }
     }
 
