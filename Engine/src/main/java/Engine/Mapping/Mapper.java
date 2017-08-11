@@ -22,9 +22,9 @@ public class Mapper implements IMapper {
         this.height = height;
         this.depth = depth;
         this.origin = new HashMap<>();
-        this.origin.put("x", Math.toIntExact(Math.round(width * 0.5)));
-        this.origin.put("y", Math.toIntExact(Math.round(height * 0.5)));
-        this.origin.put("z", Math.toIntExact(Math.round(depth * 0.5)));
+        this.origin.put("x",0);
+        this.origin.put("y",0);
+        this.origin.put("z",0);
         this.sources = new ArrayList<>();
         this.sinks = new ArrayList<>();
         this.services = new ArrayList<>();
