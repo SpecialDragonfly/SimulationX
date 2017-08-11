@@ -1,10 +1,12 @@
 package Engine.Mapping;
 
+import Engine.Events.MoveEvent;
 import Engine.ServiceDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 public class Mapper implements IMapper {
 
@@ -15,6 +17,7 @@ public class Mapper implements IMapper {
     private ArrayList<IMappedSource> sources;
     private ArrayList<IMappedSink> sinks;
     private ArrayList<IMappedService> services;
+    private HashMap<UUID, MappedActor> actors;
 
     public Mapper(int width, int height, int depth) {
 
@@ -28,6 +31,7 @@ public class Mapper implements IMapper {
         this.sources = new ArrayList<>();
         this.sinks = new ArrayList<>();
         this.services = new ArrayList<>();
+        this.actors = new HashMap<>();
     }
 
     public int getWidth() {
@@ -54,6 +58,18 @@ public class Mapper implements IMapper {
         return this.services;
     }
 
+    public HashMap<UUID, MappedActor> getActors() {
+        return this.actors;
+    }
+
+    public MappedActor getActor(UUID uuid) {
+        return this.actors.get(uuid);
+    }
+
+    public MappedActor moveActor(UUID uuid, Integer x, Integer y, Integer z) {
+
+    }
+
     public void addSource(ISource source, int instances) {
         for (int i = 0; i < instances ; i++) {
             this.sources.add(new MappedSource(this.getPos("x") , this.getPos("y"), 0, source));
@@ -73,6 +89,12 @@ public class Mapper implements IMapper {
         }
     }
 
+    public MappedActor addActor(String name, Integer bucketCapacity) {
+        MappedActor actor = new MappedActor(this.getPos("x") , this.getPos("y"), this.getPos("z"), bucketCapacity, name) ;
+        this.actors.put(actor.getUUID(), actor);
+        return actor;
+    }
+
     @Override
     public void removeService(ServiceDTO x) {
         // The service wasn't responsive, so now needs to be removed from the map.
@@ -81,18 +103,19 @@ public class Mapper implements IMapper {
     @Override
     public IMappedService getServiceByUUID(String uuid) throws Exception {
         IMappedService service = null;
-
         for (int i = 0; i < this.services.size(); i++) {
             if (this.services.get(i).getUUID().toString().equals(uuid)) {
                 service = this.services.get(i);
             }
         }
-
         if (service == null) {
             throw new Exception("No Service found");
         }
-
         return service;
+    }
+
+    public void handleMove(MoveEvent event) {
+
     }
 
     protected Integer getPos(String dimension) {
