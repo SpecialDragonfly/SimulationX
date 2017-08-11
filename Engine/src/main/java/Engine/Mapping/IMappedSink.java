@@ -1,7 +1,9 @@
 package Engine.Mapping;
 
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.UUID;
 
 public interface IMappedSink extends IMapped{
-    public ArrayList<String> getInputs();
+    Set<String> getInputs();
+    UUID getUUID();
 }

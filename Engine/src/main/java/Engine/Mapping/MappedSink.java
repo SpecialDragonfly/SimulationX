@@ -1,9 +1,11 @@
 package Engine.Mapping;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 
 public class MappedSink implements IMappedSink {
+    private final UUID uniqueId;
     private HashMap<String,Integer> coOrdinates;
     private ISink sink;
 
@@ -13,11 +15,17 @@ public class MappedSink implements IMappedSink {
         this.coOrdinates.put("y", y);
         this.coOrdinates.put("z", z);
         this.sink = sink;
+        this.uniqueId = UUID.randomUUID();
     }
 
     @Override
-    public ArrayList<String> getInputs() {
+    public Set<String> getInputs() {
         return this.sink.getInputs();
+    }
+
+    @Override
+    public UUID getUUID() {
+        return this.uniqueId;
     }
 
     @Override

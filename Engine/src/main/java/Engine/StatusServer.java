@@ -13,21 +13,25 @@ public class StatusServer implements Runnable {
 
     public StatusServer(Server server) {
         this.server = server;
-        this.servletContextHandler = new ServletContextHandler(this.server, "/view");
+        this.servletContextHandler = new ServletContextHandler(this.server, "/");
     }
 
     public void addServlet(Servlet servlet, String pathSpec) {
         this.servletContextHandler.addServlet(new ServletHolder(servlet), pathSpec);
     }
 
+    public void addServlet(Class<? extends Servlet> servlet, String pathSpec) {
+        this.servletContextHandler.addServlet(servlet, pathSpec);
+    }
+
     @Override
     public void run() {
 
         Thread t = new Thread(() -> {
-            server.setHandler(servletContextHandler);
+            server.setHandler(this.servletContextHandler);
             try {
                 server.start();
-                server.dump();
+                server.dumpStdErr();
                 server.join();
             } catch (Exception ex) {
                 // do nothing

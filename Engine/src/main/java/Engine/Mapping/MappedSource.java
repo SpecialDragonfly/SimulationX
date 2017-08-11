@@ -2,9 +2,11 @@ package Engine.Mapping;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.UUID;
 
 public class MappedSource implements IMappedSource {
 
+    private final UUID uniqueId;
     private HashMap<String,Integer> coOrdinates;
     private ISource source;
 
@@ -14,11 +16,17 @@ public class MappedSource implements IMappedSource {
         this.coOrdinates.put("y", y);
         this.coOrdinates.put("z", z);
         this.source = source;
+        this.uniqueId = UUID.randomUUID();
     }
 
     @Override
     public Set<String> getOutputs() {
         return this.source.getOutputs();
+    }
+
+    @Override
+    public UUID getUUID() {
+        return this.uniqueId;
     }
 
     @Override

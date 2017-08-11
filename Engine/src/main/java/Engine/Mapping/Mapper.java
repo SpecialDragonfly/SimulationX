@@ -30,6 +30,30 @@ public class Mapper implements IMapper {
         this.services = new ArrayList<>();
     }
 
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public int getDepth() {
+        return this.depth;
+    }
+
+    public ArrayList<IMappedSource> getSources() {
+        return this.sources;
+    }
+
+    public ArrayList<IMappedSink> getSinks() {
+        return this.sinks;
+    }
+
+    public ArrayList<IMappedService> getServices() {
+        return this.services;
+    }
+
     public void addSource(ISource source, int instances) {
         for (int i = 0; i < instances ; i++) {
             this.sources.add(new MappedSource(this.getPos("x") , this.getPos("y"), 0, source));

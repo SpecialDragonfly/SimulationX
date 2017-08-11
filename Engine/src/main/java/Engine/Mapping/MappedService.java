@@ -3,10 +3,10 @@ package Engine.Mapping;
 import java.util.*;
 
 public class MappedService implements IMappedService {
+    private final UUID uniqueId;
+    private HashMap<HashMap<String, String>, Integer> resourceMap;
     private HashMap<String,Integer> coOrdinates;
     private IService service;
-    private final HashSet<String> inputs;
-    private final HashSet<String> outputs;
 
     public MappedService(Integer x, Integer y, Integer z, IService service) {
         this.coOrdinates = new HashMap<>();
@@ -14,46 +14,33 @@ public class MappedService implements IMappedService {
         this.coOrdinates.put("y", y);
         this.coOrdinates.put("z", z);
         this.service = service;
-        this.outputs = new HashSet<>(service.getResourceMap().values());
-        this.inputs = new HashSet<>(service.getResourceMap().keySet());
+        this.resourceMap = service.getResourceMap();
+        this.uniqueId = UUID.randomUUID();
     }
 
     public HashMap<String, Integer> getCoOrdinates() {
         return this.coOrdinates;
     }
 
-    public HashMap<String, String> getExchangeMap() {
-        return this.service.getResourceMap();
-    }
-
     @Override
     public Set<String> getInputs() {
-        return this.inputs;
-    }
-
-    public Set<String> getInputs(String output) {
         Set<String> inputs = new HashSet<>();
-        for(Map.Entry<String, String> entry : this.getExchangeMap().entrySet()) {
-            if(output.equals(entry.getValue())) {
-                inputs.add(entry.getKey());
-            }
-        }
+        Set<HashMap<String, String>> resources = this.resourceMap.keySet();
+        resources.forEach(resource -> resource.keySet().forEach(inputs::add));
 
         return inputs;
     }
 
     @Override
-    public Set<String> getOutputs() {
-        return this.outputs;
+    public UUID getUUID() {
+        return this.uniqueId;
     }
 
-    public Set<String> getOutputs(String input) {
+    @Override
+    public Set<String> getOutputs() {
         Set<String> outputs = new HashSet<>();
-        for(Map.Entry<String, String> entry : this.getExchangeMap().entrySet()) {
-            if(input.equals(entry.getKey())) {
-                outputs.add(entry.getValue());
-            }
-        }
+        Set<HashMap<String, String>> resources = this.resourceMap.keySet();
+        resources.forEach(resource -> resource.forEach((x,y) -> outputs.add(y)));
 
         return outputs;
     }

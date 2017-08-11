@@ -1,8 +1,10 @@
 package Engine;
 
 import Engine.Events.Event;
+import Engine.Events.TickEvent;
 import Engine.Mapping.Mapper;
 import Engine.Servlets.GetDetailsServlet;
+import Engine.Servlets.RegisterServlet;
 import org.eclipse.jetty.server.Server;
 
 import static java.lang.Thread.sleep;
@@ -36,8 +38,9 @@ public class Engine implements Runnable, QueueListener {
         this.queue.subscribe("TickEvent", this);
         this.registrationQueue.subscribe("RegisterEvent", this.engineStrategy);
 
-        StatusServer statusServer = new StatusServer(new Server(8000));
-        statusServer.addServlet(new GetDetailsServlet(this.engineStrategy), "/status/*");
+        StatusServer statusServer = new StatusServer(new Server(8005));
+        statusServer.addServlet(new GetDetailsServlet(this.engineStrategy), "/status");
+        statusServer.addServlet(new RegisterServlet(this.registrationQueue), "/register");
         statusServer.run();
 
         long count = 0;
@@ -46,9 +49,9 @@ public class Engine implements Runnable, QueueListener {
             this.engineStrategy.verifyObjects();
 
             // We've ticked, so tell anything that cares.
-            this.queue.push(new Engine.Events.TickEvent());
+            this.queue.push(new TickEvent());
             try {
-                sleep(1);
+                sleep(1000 * 10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

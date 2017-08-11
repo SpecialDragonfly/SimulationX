@@ -1,7 +1,9 @@
 package Engine.Mapping;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface IMappedSource extends IMapped {
-    public Set<String> getOutputs();
+    Set<String> getOutputs();
+    UUID getUUID();
 }

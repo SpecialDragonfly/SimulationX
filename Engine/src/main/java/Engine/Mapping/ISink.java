@@ -1,10 +1,7 @@
 package Engine.Mapping;
 
-import Engine.Engine;
-
-import java.util.ArrayList;
+import java.util.Set;
 
 public interface ISink {
-
-    public ArrayList<String> getInputs();
+    Set<String> getInputs();
 }

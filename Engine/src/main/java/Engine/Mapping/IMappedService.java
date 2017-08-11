@@ -1,8 +1,10 @@
 package Engine.Mapping;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface IMappedService extends IMappedSink, IMappedSource{
-    public Set<String> getOutputs(String input);
-    public Set<String> getInputs(String output);
+    Set<String> getOutputs();
+    Set<String> getInputs();
+    UUID getUUID();
 }

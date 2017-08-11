@@ -11,14 +11,14 @@ public class ServiceDTO implements IService {
     private final String actionUrl;
     private final String statusUrl;
     private final String healthcheckUrl;
-    private HashMap<String, String> resourceMap;
+    private HashMap<HashMap<String,String>, Integer> resourceMap;
 
-    public ServiceDTO(String actionUrl, String statusUrl, String healthcheckUrl, HashMap<String,String> resourceMap) {
+    public ServiceDTO(String actionUrl, String statusUrl, String healthcheckUrl, HashMap<HashMap<String,String>, Integer> resourceMap) {
 
-        this.actionUrl = actionUrl;
-        this.statusUrl = statusUrl;
-        this.healthcheckUrl = healthcheckUrl;
-        this.resourceMap = resourceMap;
+        this.actionUrl = actionUrl; // Interact with service
+        this.statusUrl = statusUrl; // What is the status of the service
+        this.healthcheckUrl = healthcheckUrl; // Is the service still there
+        this.resourceMap = resourceMap; // What resources are exchanged by the service
     }
 
     public String getActionUrl() {
@@ -33,7 +33,7 @@ public class ServiceDTO implements IService {
         return healthcheckUrl;
     }
 
-    public HashMap<String, String> getResourceMap() {
+    public HashMap<HashMap<String,String>, Integer> getResourceMap() {
         return resourceMap;
     }
 }

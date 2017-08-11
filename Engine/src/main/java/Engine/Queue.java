@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Queue {
     private ConcurrentLinkedQueue<Event> tasks = null;
     private HashMap<String, Engine> subscribedEngines = null;
-    private HashMap<String, ArrayList<EnvironmentObject>> subscribedEnvironmentObjects = null;
+    private HashMap<String, ArrayList<ServiceDTO>> subscribedEnvironmentObjects = null;
     private HashMap<String, EngineStrategy> subscribedStrategies = null;
 
     public Queue() {
@@ -20,6 +20,7 @@ public class Queue {
     }
 
     public void push(Event event) {
+        System.out.println("An event of type " + event.getClass().getSimpleName() + " has been added to the queue");
         this.tasks.add(event);
         this.subscribedEngines.forEach(
             (subEvent, engine) -> {
@@ -28,10 +29,11 @@ public class Queue {
                 }
             }
         );
-        this.subscribedEnvironmentObjects.forEach(
-            (subEvent, environmentObjects) -> {
+
+        this.subscribedStrategies.forEach(
+            (subEvent, strategy) -> {
                 if (event.getClass().getSimpleName().equals(subEvent)) {
-                    environmentObjects.forEach(o -> o.handle(event));
+                    strategy.handle(event);
                 }
             }
         );
@@ -39,18 +41,6 @@ public class Queue {
 
     public void subscribe(String eventName, Engine engine) {
         this.subscribedEngines.put(eventName, engine);
-    }
-
-    public void subscribe(String eventName, EnvironmentObject object) {
-        if (this.subscribedEnvironmentObjects.containsKey(eventName)) {
-            ArrayList<EnvironmentObject> objects = this.subscribedEnvironmentObjects.get(eventName);
-            objects.add(object);
-            this.subscribedEnvironmentObjects.put(eventName, objects);
-        } else {
-            ArrayList<EnvironmentObject> a = new ArrayList<EnvironmentObject>();
-            a.add(object);
-            this.subscribedEnvironmentObjects.put(eventName, a);
-        }
     }
 
     public void subscribe(String eventName, EngineStrategy strategy) {

@@ -6,6 +6,9 @@ import Engine.Mapping.IService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,18 +18,24 @@ import java.util.HashMap;
 public class SimpleEngineStrategy implements EngineStrategy {
 
     private final IMapper mapper;
-    private ArrayList<ServiceDTO> serviceDTOArray = new ArrayList<ServiceDTO>();
-    private ArrayList<String> resourceTypes = new ArrayList<>();
+    private ArrayList<ServiceDTO> serviceDTOArray;
 
     public SimpleEngineStrategy(IMapper mapper) {
         this.mapper = mapper;
+        serviceDTOArray = new ArrayList<ServiceDTO>();
     }
 
     public void verifyObjects() {
         // Verify that Sinks/Sources/Services still exist.
         ArrayList<ServiceDTO> aliveServices = new ArrayList<>();
         this.serviceDTOArray.forEach(x -> {
-            boolean alive = this.doHealthCheck(x.getHealthcheckUrl());
+            boolean alive = false;
+            try {
+                alive = this.doHealthCheck(x.getHealthcheckUrl());
+            } catch (IOException ex) {
+                // Do nothing
+            }
+
             if (alive) {
                 aliveServices.add(x);
             } else {
@@ -41,56 +50,40 @@ public class SimpleEngineStrategy implements EngineStrategy {
         this.mapper.addService(serviceDTO, 1);
     }
 
-    public ArrayList<ServiceDTO> getServiceDTOArray() {
-        return this.serviceDTOArray;
+    @Override
+    public IMapper getMapper() {
+        return this.mapper;
     }
 
     public void handle(Event event) {
+        System.out.println("The Simple Engine strategy has taken an item off the queue");
         String serviceJSON = event.getMessage();
-
+        System.out.println(serviceJSON);
         JSONObject jsonObject = new JSONObject(serviceJSON);
         String actionUrl = jsonObject.getString("action_url");
         String statusUrl = jsonObject.getString("status_url");
         String healthcheckUrl = jsonObject.getString("healthcheck_url");
 
-        HashMap<String, String> resourceMap = this.getServiceExchangeMap(jsonObject);
+        HashMap<String, String> resourceMap = new HashMap<>(); //this.getServiceExchangeMap(jsonObject);
+        HashMap<HashMap<String, String>, Integer> serviceExchangeRates = new HashMap<>();
 
         JSONArray resourceArray = jsonObject.getJSONArray("resources");
         for (int i = 0; i < resourceArray.length(); i++) {
             String input = resourceArray.getJSONObject(i).getString("input");
             String output = resourceArray.getJSONObject(i).getString("output");
+            int exchangeRate = resourceArray.getJSONObject(i).getInt("exchange_rate");
             resourceMap.put(input, output);
+            serviceExchangeRates.put(resourceMap, exchangeRate);
         }
 
-        ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap);
+        ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, serviceExchangeRates);
         this.serviceDTOArray.add(service);
         this.update(service);
     }
 
-    private HashMap<String, String> getServiceExchangeMap(JSONObject service) {
-        HashMap<String, String> exchangeMap = new HashMap<>();
-        JSONArray exchangeData = service.getJSONArray("exchanges");
-        for (int i = 0; i < exchangeData.length(); i++) {
-            JSONObject exchange = exchangeData.getJSONObject(i);
-            JSONObject input = exchange.getJSONObject("in");
-            JSONObject output = exchange.getJSONObject("out");
-            String inputType = input.get("type").toString();
-            String outputType = output.get("type").toString();
-            if (!this.resourceTypes.contains(inputType)) {
-                continue;
-            }
-            if (!this.resourceTypes.contains(outputType)) {
-                this.resourceTypes.add(outputType);
-            }
-            exchangeMap.put(inputType,outputType);
-        }
-
-        return exchangeMap;
-    }
-
-    private boolean doHealthCheck(String url) {
-        // Calls the url.
-
-        return true;
+    private boolean doHealthCheck(String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        return connection.getResponseCode() == 200;
     }
 }

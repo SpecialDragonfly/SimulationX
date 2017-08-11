@@ -6,10 +6,8 @@ import Engine.Queue;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLDecoder;
 
 public class RegisterServlet extends HttpServlet {
 
@@ -17,13 +15,31 @@ public class RegisterServlet extends HttpServlet {
 
     public RegisterServlet(Queue queue)
     {
-
         this.queue = queue;
     }
 
     @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("text/html");
+
+            response.getWriter().print("<html><body><h1>This endpoint needs to be hit via POST</h1></body></html>");
+        } catch (IOException ex) {
+            System.out.println("Couldn't echo out");
+        }
+    }
+
+    @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        this.queue.push(new RegisterEvent(this.getBody(httpServletRequest)));
+        String body = null;
+        try {
+            body = URLDecoder.decode(this.getBody(httpServletRequest), "utf8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(body);
+        this.queue.push(new RegisterEvent(body));
     }
 
     private String getBody(HttpServletRequest request) {
