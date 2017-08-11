@@ -46,6 +46,24 @@ public class Mapper implements IMapper {
     }
 
     @Override
+    public int getWidth() {
+
+        return this.width;
+    }
+
+    @Override
+    public int getHeight() {
+
+        return this.height;
+    }
+
+    @Override
+    public int getDepth() {
+
+        return this.depth;
+    }
+
+    @Override
     public void addService(IService service, int instances) {
         for (int i = 0; i < instances ; i++) {
             this.services.add(new MappedService(this.getPos("x") , this.getPos("y"),this.getPos("z"), service));
@@ -53,8 +71,26 @@ public class Mapper implements IMapper {
     }
 
     @Override
-    public void removeService(ServiceDTO x) {
+    public void removeService(IService service) {
         // The service wasn't responsive, so now needs to be removed from the map.
+    }
+
+    @Override
+    public ArrayList<IMappedService> getServices() {
+
+        return this.services;
+    }
+
+    @Override
+    public ArrayList<IMappedSource> getSources() {
+
+        return this.sources;
+    }
+
+    @Override
+    public ArrayList<IMappedSink> getSinks() {
+
+        return this.sinks;
     }
 
     protected Integer getPos(String dimension) {

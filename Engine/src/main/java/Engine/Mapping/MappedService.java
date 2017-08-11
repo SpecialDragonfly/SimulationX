@@ -24,23 +24,7 @@ public class MappedService implements IMappedService {
         return this.service.getExchangeMap();
     }
 
-    @Override
-    public Set<String> getOutputs(String input) {
-        return null;
-    }
-
-    @Override
-    public Set<String> getInputs(String output) {
-        return null;
-    }
-
-    @Override
-    public Set<String> getInputs() {
-        return this.service.getInputs();
-    }
-
-    @Override
-    public Set<String> getOutputs() {
-        return this.service.getOutputs();
+    public String getId() {
+        return service.getId();
     }
 }

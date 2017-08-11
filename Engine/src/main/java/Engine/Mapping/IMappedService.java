@@ -1,8 +1,7 @@
 package Engine.Mapping;
 
-import java.util.Set;
+import Engine.DTO.IService;
 
-public interface IMappedService extends IMappedSink, IMappedSource{
-    public Set<String> getOutputs(String input);
-    public Set<String> getInputs(String output);
+public interface IMappedService extends IService, IMapped{
+
 }

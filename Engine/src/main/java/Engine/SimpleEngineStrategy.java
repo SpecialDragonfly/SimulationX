@@ -1,5 +1,6 @@
 package Engine;
 
+import Engine.DTO.Service;
 import Engine.Events.Event;
 import Engine.Mapping.IMapper;
 import Engine.DTO.IService;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 public class SimpleEngineStrategy implements EngineStrategy {
 
     private final IMapper mapper;
-    private ArrayList<ServiceDTO> serviceDTOArray = new ArrayList<ServiceDTO>();
+    private ArrayList<Service> serviceDTOArray = new ArrayList<>();
     private ArrayList<String> resourceTypes = new ArrayList<>();
 
     public SimpleEngineStrategy(IMapper mapper) {
@@ -24,7 +25,7 @@ public class SimpleEngineStrategy implements EngineStrategy {
 
     public void verifyObjects() {
         // Verify that Sinks/Sources/Services still exist.
-        ArrayList<ServiceDTO> aliveServices = new ArrayList<>();
+        ArrayList<Service> aliveServices = new ArrayList<>();
         this.serviceDTOArray.forEach(x -> {
             boolean alive = this.doHealthCheck(x.getHealthcheckUrl());
             if (alive) {
@@ -41,7 +42,7 @@ public class SimpleEngineStrategy implements EngineStrategy {
         this.mapper.addService(serviceDTO, 1);
     }
 
-    public ArrayList<ServiceDTO> getServiceDTOArray() {
+    public ArrayList<Service> getServiceDTOArray() {
         return this.serviceDTOArray;
     }
 
@@ -60,7 +61,7 @@ public class SimpleEngineStrategy implements EngineStrategy {
             resourceMap.put(input, output);
         }
 
-        ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap);
+        Service service = new Service(actionUrl, actionUrl, statusUrl, healthcheckUrl, resourceMap);
         this.serviceDTOArray.add(service);
         this.update(service);
 
