@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SimulationX</title>
+    <script data-main="./config.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script type="text/javascript">
+
+        let popup;
+        let actorName;
+        let actorId;
+        let server;
+        let initialize = false;
+
+        let zeros = function (rows, cols, value) {
+            let array = [], row = [];
+            while (cols--) row.push(value);
+            while (rows--) array.push(row.slice());
+            return array;
+            };
+
+        let displayPopup = function(x, y, object) {
+            popup = popup || document.getElementById("popup");
+            x=x+10;
+            popup.style.top = y+"px";
+            popup.style.left = x+"px";
+            popup.style.visibility = "visible";
+
+            if (object.type === "service") {
+                popup.innerHTML = "Service<BR>Buy: 1 "+object.buy+"<BR>Sell: "+object.exchange+" "+object.sell+"<BR>Availability: "+object.amount;
+            } else if (object.type === "source") {
+                popup.innerHTML = "Source<BR>Resource: "+object.resource+"<BR>Availability: "+object.amount;
+            }
+        };
+
+        let hidePopup = function() {
+            popup = popup || document.getElementById("popup");
+            popup.style.visibility = "hidden";
+        };
+
+        let register = function() {
+            actorName = document.getElementById("actor-name").value;
+            server = document.getElementById("server").value;
+            fetch("http://"+server+"/register", {
+                method: 'POST',
+                mode: 'cors',
+                body: JSON.stringify( { name : actorName} )
+            }).then(function (response) {
+                return response.json();
+            }).then(function (actor) {
+                actorId = actor.id;
+                init();
+            });
+        };
+
+        let init = function() {
+            require([
+                    './jsiso/canvas/Control',
+                    './jsiso/tile/Field',
+                    './jsiso/img/load',
+                    './jsiso/canvas/Input'
+                ],
+                function (CanvasControl, TileField, imgLoad, CanvasInput) {
+                    let actorX = 0;
+                    let actorY = 0;
+                    let context;
+                    let tileLayer;
+                    let playerLayer;
+                    let input;
+                    let images;
+                    let serviceCoords = [];
+
+                    document.getElementById("register").style.visibility = "hidden";
+
+                    let loadStatusMap = function () {
+                        fetch("http://"+server+"/status?id="+actorId+"&x=" + actorX + "&y=" + actorY, {
+                            method: 'GET',
+                            mode: 'cors'
+                        }).then(function (response) {
+                            return response.json();
+                        }).then(function (mapResponse) {
+
+                            let mapWidth = mapResponse.map.width;
+                            let mapHeight = mapResponse.map.height;
+
+                            let tileMap = zeros(mapWidth, mapHeight, 0);
+                            let playerMap = zeros(mapWidth, mapHeight, -1);
+                            let heightMap = zeros(mapWidth, mapHeight, 0);
+
+                            mapResponse.services.forEach(function (el) {
+                                tileMap[el.x][el.y] = 1;
+                                serviceCoords[el.x + "-" + el.y] = {
+                                    type: "service",
+                                    buy: el.buy,
+                                    sell: el.sell,
+                                    exchange: el.exchange_rate,
+                                    amount: el.amount
+                                };
+                            });
+
+                            mapResponse.sources.forEach(function (el) {
+                                tileMap[el.x][el.y] = 2;
+                                serviceCoords[el.x + "-" + el.y] = {
+                                    type: "source",
+                                    resource: el.resource,
+                                    amount: el.amount
+                                };
+                            });
+
+                            playerMap[mapResponse.x][mapResponse.y] = 0;
+                            mapResponse.actors.forEach(function (el) {
+                                playerMap[el.x][el.y] = 0;
+                            });
+
+                            mapResponse.bucket.forEach(function (res) {
+                                let spans = document.querySelectorAll("[data-res='" + res.name + "']");
+                                if (spans.length === 0) {
+                                    spans = [].slice.call(document.querySelectorAll("[data-res='']")).slice(0, 2);
+                                }
+
+                                spans.forEach(function (span) {
+                                    if (span.className === "resource") {
+                                        span.innerHTML = res.name;
+                                    } else {
+                                        span.innerHTML = "x" + res.amount;
+                                    }
+                                });
+                            });
+
+                            if (initialize === false) {
+                                context = CanvasControl.create("canvas", window.innerWidth, window.innerHeight, {
+                                    background: "#100013"
+                                });
+                                tileLayer = new TileField(context, CanvasControl().height, CanvasControl().width);
+                                playerLayer = new TileField(context, CanvasControl().height, CanvasControl().width);
+                                input = new CanvasInput(document, CanvasControl());
+
+                                input.keyboard(function (pressed, keydown) {
+                                    if (!keydown) {
+                                        switch (pressed) {
+                                            // Move player
+                                            case 40:
+                                                if (actorY < mapHeight - 1) actorY++;
+                                                break;
+                                            case 38:
+                                                if (actorY > 0) actorY--;
+                                                break;
+                                            case 39:
+                                                if (actorX < mapWidth - 1) actorX++;
+                                                break;
+                                            case 37:
+                                                if (actorX > 0) actorX--;
+                                                break;
+                                            case 65:
+                                                playerLayer.setZoom("in");
+                                                tileLayer.setZoom("in");
+                                                break;
+                                            case 83:
+                                                playerLayer.setZoom("out");
+                                                tileLayer.setZoom("out");
+                                                break;
+                                        }
+                                        // Call draw Tile Map function
+                                        loadStatusMap();
+                                    }
+                                });
+
+                                input.mouse_move(function (coords) {
+                                    let t = tileLayer.applyMouseFocus(coords.x, coords.y);
+                                    let x = t.x - 1;
+                                    let y = Math.abs(mapResponse.map.width - t.y);
+                                    if (serviceCoords[y + "-" + x] !== undefined) {
+                                        let object = serviceCoords[y + "-" + x];
+                                        displayPopup(coords.x, coords.y, object);
+                                    } else {
+                                        hidePopup();
+                                    }
+                                });
+                                CanvasControl.fullScreen();
+
+                                tileLayer.setup({
+                                    layout: tileMap,
+                                    isometric: true,
+                                    graphics: images[0].files,
+                                    graphicsDictionary: images[0].dictionary,
+                                    tileHeight: 40,
+                                    tileWidth: 80,
+                                    heightMap: {
+                                        map: heightMap,
+                                        offset: 30
+                                    }
+                                });
+
+                                playerLayer.setup({
+                                    layout: playerMap,
+                                    isometric: true,
+                                    graphics: images[1].files,
+                                    graphicsDictionary: images[1].dictionary,
+                                    tileHeight: 40,
+                                    tileWidth: 80,
+                                    heightMap: {
+                                        map: heightMap,
+                                        offset: 0,
+
+                                    }
+                                });
+
+                                initialize = true;
+                            } else {
+                                tileLayer.setLayout(tileMap);
+                                playerLayer.setLayout(playerMap);
+                            }
+
+                            tileLayer.rotate("left");
+                            tileLayer.setOffset((window.innerWidth) / 2, (window.innerHeight - 15) / 4);
+                            playerLayer.rotate("left");
+                            playerLayer.setOffset((window.innerWidth) / 2, window.innerHeight / 4);
+
+                            context.clearRect(0, 0, CanvasControl().width, CanvasControl().height);
+                            for (let i = 0; i < mapWidth; i++) {
+                                for (let j = 0; j < mapHeight; j++) {
+
+                                    tileLayer.draw(i, j);
+                                    playerLayer.draw(i, j);
+                                }
+                            }
+                        });
+                    };
+
+                    imgLoad([{graphics: ["./img/char.png"]}]).then(function (charImage) {
+                        imgLoad([
+                            {
+                                graphics: [
+                                    "./img/ground.png",
+                                    "./img/house.png",
+                                    "./img/trees.png",
+                                ]
+                            },
+                            {
+                                graphics: [charImage[0].files[charImage[0].dictionary[0]].src],
+                                spritesheet: {width: 48, height: 48}
+                            }
+                        ]).then(function (imgResponse) {
+                            images = imgResponse;
+                            loadStatusMap();
+                            setInterval(loadStatusMap, 1000);
+                        });
+                    });
+                });
+        }
+
+    </script>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        .inventory-table {
+            z-index:1000;
+            position: absolute;
+            left: 0;
+            top: 20%;
+            margin-left: 60px;
+        }
+        .inventory-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            align-content: flex-start
+        }
+
+        .inventory-cell {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8709/inventory-atlas.png');
+            background-position: -229px -331px;
+        }
+
+        .inventory {
+            width:50%;
+            height:50%;
+            padding-left: -10px;
+        }
+        .logo {
+            position:absolute;
+            z-index: 2000;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .resource, .counter {
+            font-size: 8pt; color:white
+        }
+
+        #popup {
+            visibility: hidden;
+            position: absolute;
+            z-index:1000;
+            background-color: #5A5753;
+            color: white;
+            padding: 5px;
+            border: solid 1px #905640;
+            border-radius: 5%;
+        }
+
+        #register {
+            position: fixed;
+            background-color: black;
+            width:100%;
+            height:100%;
+            z-index: 1500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        #register-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #register-form > input {
+            margin-top: 10px;
+            margin-bottom: 40px;
+            width: 200px;
+            background-color: #5A5753;
+            padding: 10px;
+            border: solid 1px #905640;
+            box-shadow: inset 1px 1px 2px 0 #707070;
+            transition: box-shadow 0.3s;
+            color: white;
+        }
+
+        #register-button {
+            width:200px;
+            background-color: #5A5753;
+            color: white;
+            border: solid 1px #905640;
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            margin-top:20px;
+        }
+    </style>
+</head>
+<body>
+    <img src="./img/logo.png" class="logo">
+    <div id="register">
+        <div id="register-form">
+            <span>Player Name</span>
+            <input type="text" id="actor-name">
+            <span>Server</span>
+            <input type="text" id = "server" value="127.0.0.1:8090">
+            <div id = "register-button" onclick="register()">Register</div>
+        </div>
+    </div>
+    <div class="inventory-table">
+        <img class = "inventory" src="./img/inventory.png">
+        <div  class="inventory-row">
+            <div class="inventory-cell">
+                <span class="resource" data-res="Wood"></span>
+                <span class="counter" data-res="Wood"></span>
+            </div>
+            <div class="inventory-cell">
+                <span class="resource" data-res=""></span>
+                <span class="counter" data-res=""></span>
+            </div>
+            <div class="inventory-cell">
+                <span class="resource" data-res=""></span>
+                <span class="counter" data-res=""></span>
+            </div>
+            <div class="inventory-cell">
+                <span class="resource" data-res=""></span>
+                <span class="counter" data-res=""></span>
+            </div>
+            <div class="inventory-cell">
+                <span class="resource" data-res=""></span>
+                <span class="counter" data-res=""></span>
+            </div>
+        </div>
+    </div>
+    <div id="popup"></div>
+</body>
+</html>
