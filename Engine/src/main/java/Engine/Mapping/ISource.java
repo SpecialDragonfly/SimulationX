@@ -1,7 +1,8 @@
 package Engine.Mapping;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 public interface ISource {
-    HashSet<String> getOutputs();
+    Integer getamount();
+    String getResourceType();
 }

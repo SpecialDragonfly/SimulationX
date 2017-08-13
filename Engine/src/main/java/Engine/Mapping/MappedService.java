@@ -1,10 +1,12 @@
 package Engine.Mapping;
 
+import Engine.ExchangeItem;
+
 import java.util.*;
 
 public class MappedService implements IMappedService {
     private final UUID uniqueId;
-    private HashMap<HashMap<String, String>, Integer> resourceMap;
+    private ArrayList<ExchangeItem> resourceMap;
     private HashMap<String,Integer> coOrdinates;
     private IService service;
 
@@ -18,7 +20,7 @@ public class MappedService implements IMappedService {
         this.uniqueId = UUID.randomUUID();
     }
 
-    public HashMap<HashMap<String, String>, Integer> getResourceMap() {
+    public ArrayList<ExchangeItem> getResourceMap() {
         return resourceMap;
     }
 
@@ -29,8 +31,9 @@ public class MappedService implements IMappedService {
     @Override
     public Set<String> getInputs() {
         Set<String> inputs = new HashSet<>();
-        Set<HashMap<String, String>> resources = this.resourceMap.keySet();
-        resources.forEach(resource -> resource.keySet().forEach(inputs::add));
+        for (ExchangeItem exchange: this.resourceMap) {
+            inputs.add(exchange.getInput());
+        }
 
         return inputs;
     }
@@ -43,8 +46,9 @@ public class MappedService implements IMappedService {
     @Override
     public Set<String> getOutputs() {
         Set<String> outputs = new HashSet<>();
-        Set<HashMap<String, String>> resources = this.resourceMap.keySet();
-        resources.forEach(resource -> resource.forEach((x,y) -> outputs.add(y)));
+        for (ExchangeItem exchange: this.resourceMap) {
+            outputs.add(exchange.getOutput());
+        }
 
         return outputs;
     }

@@ -5,6 +5,7 @@ import Engine.ServiceDTO;
 public interface IMapper {
 
     void addService(IService service, int instances);
+    void addSource(ISource source, int instances);
 
     void removeService(ServiceDTO x);
 

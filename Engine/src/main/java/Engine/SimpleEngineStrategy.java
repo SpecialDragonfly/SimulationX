@@ -6,6 +6,7 @@ import Engine.Events.TickEvent;
 import Engine.Mapping.IMappedService;
 import Engine.Mapping.IMapper;
 import Engine.Mapping.IService;
+import Engine.Mapping.ISource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,8 +24,11 @@ public class SimpleEngineStrategy implements EngineStrategy {
     private final IMapper mapper;
     private ArrayList<ServiceDTO> serviceDTOArray;
 
-    public SimpleEngineStrategy(IMapper mapper) {
+    public SimpleEngineStrategy(IMapper mapper, ArrayList<ISource> sources) {
         this.mapper = mapper;
+        sources.forEach(s -> {
+            this.mapper.addSource(s, 3);
+        });
         serviceDTOArray = new ArrayList<ServiceDTO>();
     }
 
@@ -73,19 +77,18 @@ public class SimpleEngineStrategy implements EngineStrategy {
             String statusUrl = jsonObject.getString("status_url");
             String healthcheckUrl = jsonObject.getString("healthcheck_url");
 
-            HashMap<String, String> resourceMap = new HashMap<>(); //this.getServiceExchangeMap(jsonObject);
-            HashMap<HashMap<String, String>, Integer> serviceExchangeRates = new HashMap<>();
+            ArrayList<ExchangeItem> resourceMap = new ArrayList<>();
 
             JSONArray resourceArray = jsonObject.getJSONArray("resources");
             for (int i = 0; i < resourceArray.length(); i++) {
                 String input = resourceArray.getJSONObject(i).getString("input");
                 String output = resourceArray.getJSONObject(i).getString("output");
                 int exchangeRate = resourceArray.getJSONObject(i).getInt("exchange_rate");
-                resourceMap.put(input, output);
-                serviceExchangeRates.put(resourceMap, exchangeRate);
+                ExchangeItem exchange = new ExchangeItem(input, output, exchangeRate);
+                resourceMap.add(exchange);
             }
 
-            ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, serviceExchangeRates);
+            ServiceDTO service = new ServiceDTO(actionUrl, statusUrl, healthcheckUrl, resourceMap);
             this.serviceDTOArray.add(service);
             this.update(service);
         } else if (event instanceof TickEvent) {

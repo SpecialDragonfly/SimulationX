@@ -2,11 +2,14 @@ package Engine;
 
 import Engine.Events.Event;
 import Engine.Events.TickEvent;
+import Engine.Mapping.ISource;
 import Engine.Mapping.Mapper;
 import Engine.Servlets.GetDetailsServlet;
 import Engine.Servlets.GetStatusServlet;
 import Engine.Servlets.RegisterServlet;
 import org.eclipse.jetty.server.Server;
+
+import java.util.ArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -26,7 +29,9 @@ public class Engine implements Runnable, QueueListener {
         this.queue = new Queue();
         this.registrationQueue = new Queue();
         this.tickLimit = tickLimit;
-        this.engineStrategy = new SimpleEngineStrategy(new Mapper(3, 3, 0));
+        ArrayList<ISource> sources = new ArrayList<>();
+        sources.add(new SourceDTO("wood", 100));
+        this.engineStrategy = new SimpleEngineStrategy(new Mapper(3, 3, 0), sources);
     }
 
     public void handle(Event event) {

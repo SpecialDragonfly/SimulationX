@@ -20,8 +20,12 @@ public class MappedSource implements IMappedSource {
     }
 
     @Override
-    public Set<String> getOutputs() {
-        return this.source.getOutputs();
+    public Integer getamount() {
+        return this.source.getamount();
+    }
+
+    public String getResourceType() {
+        return this.source.getResourceType();
     }
 
     @Override

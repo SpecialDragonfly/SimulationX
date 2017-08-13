@@ -1,12 +1,16 @@
 package Engine.Mapping;
 
+import Engine.Events.CollisionEvent;
+import Engine.Events.Event;
 import Engine.Events.MoveEvent;
+import Engine.Events.MovedEvent;
 import Engine.ServiceDTO;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.UUID;
 
 public class Mapper implements IMapper {
 
@@ -17,7 +21,7 @@ public class Mapper implements IMapper {
     private ArrayList<IMappedSource> sources;
     private ArrayList<IMappedSink> sinks;
     private ArrayList<IMappedService> services;
-    private HashMap<UUID, MappedActor> actors;
+    private HashMap<String, MappedActor> actors;
 
     public Mapper(int width, int height, int depth) {
 
@@ -58,16 +62,62 @@ public class Mapper implements IMapper {
         return this.services;
     }
 
-    public HashMap<UUID, MappedActor> getActors() {
+    public HashMap<String, MappedActor> getActors() {
         return this.actors;
     }
 
-    public MappedActor getActor(UUID uuid) {
+    public MappedActor getActor(String uuid) {
         return this.actors.get(uuid);
     }
 
-    public MappedActor moveActor(UUID uuid, Integer x, Integer y, Integer z) {
+    public Event moveActor(String uuid, Integer x, Integer y, Integer z) {
+        MappedActor actor = this.getActor(uuid);
+        actor.move(x,y,z);
+        return this.doHitTest(actor);
+    }
 
+    private Event doHitTest(MappedActor actor) {
+        JSONObject eventMessage = new JSONObject();
+        JSONObject actorJson = new JSONObject();
+        actorJson.put("id", actor.getUUID().toString());
+        JSONArray bucketArray = new JSONArray();
+        for (HashMap.Entry<String, Integer> entry : actor.getBucket().entrySet()) {
+            JSONObject bucketItem = new JSONObject();
+            bucketItem.put("name", entry.getKey());
+            bucketItem.put("amount", entry.getValue());
+            bucketArray.put(bucketItem);
+        }
+        actorJson.put("bucket", bucketArray);
+        eventMessage.put("actor", actorJson);
+
+        for(IMappedSource s: this.sources) {
+            if(s.getCoOrdinates().get("x").equals(actor.getCoOrdinates().get("x"))
+                    && s.getCoOrdinates().get("y").equals(actor.getCoOrdinates().get("y"))
+                    && s.getCoOrdinates().get("z").equals(actor.getCoOrdinates().get("z"))) {
+
+                JSONObject hit = new JSONObject();
+                hit.put("type", "source");
+                hit.put("id", s.getUUID().toString());
+
+                return new CollisionEvent(eventMessage.toString());
+            }
+        }
+
+        for(IMappedService s: this.services) {
+            if(s.getCoOrdinates().get("x").equals(actor.getCoOrdinates().get("x"))
+                    && s.getCoOrdinates().get("y").equals(actor.getCoOrdinates().get("y"))
+                    && s.getCoOrdinates().get("z").equals(actor.getCoOrdinates().get("z"))) {
+
+
+                JSONObject hit = new JSONObject();
+                hit.put("type", "service");
+                hit.put("id", s.getUUID().toString());
+
+                return new CollisionEvent(eventMessage.toString());
+            }
+        }
+
+        return new MovedEvent(eventMessage.toString());
     }
 
     public void addSource(ISource source, int instances) {
@@ -91,7 +141,7 @@ public class Mapper implements IMapper {
 
     public MappedActor addActor(String name, Integer bucketCapacity) {
         MappedActor actor = new MappedActor(this.getPos("x") , this.getPos("y"), this.getPos("z"), bucketCapacity, name) ;
-        this.actors.put(actor.getUUID(), actor);
+        this.actors.put(actor.getUUID().toString(), actor);
         return actor;
     }
 

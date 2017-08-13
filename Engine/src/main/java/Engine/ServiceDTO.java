@@ -2,6 +2,7 @@ package Engine;
 
 import Engine.Mapping.IService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -11,9 +12,9 @@ public class ServiceDTO implements IService {
     private final String actionUrl;
     private final String statusUrl;
     private final String healthcheckUrl;
-    private HashMap<HashMap<String,String>, Integer> resourceMap;
+    private ArrayList<ExchangeItem> resourceMap;
 
-    public ServiceDTO(String actionUrl, String statusUrl, String healthcheckUrl, HashMap<HashMap<String,String>, Integer> resourceMap) {
+    public ServiceDTO(String actionUrl, String statusUrl, String healthcheckUrl, ArrayList<ExchangeItem> resourceMap) {
 
         this.actionUrl = actionUrl; // Interact with service
         this.statusUrl = statusUrl; // What is the status of the service
@@ -33,7 +34,7 @@ public class ServiceDTO implements IService {
         return healthcheckUrl;
     }
 
-    public HashMap<HashMap<String,String>, Integer> getResourceMap() {
+    public ArrayList<ExchangeItem> getResourceMap() {
         return resourceMap;
     }
 }

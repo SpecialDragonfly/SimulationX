@@ -1,7 +1,10 @@
 package Engine.Mapping;
 
+import Engine.ExchangeItem;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IService {
-    HashMap<HashMap<String,String>, Integer> getResourceMap();
+    ArrayList<ExchangeItem> getResourceMap();
 }
