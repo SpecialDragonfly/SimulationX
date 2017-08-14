@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import Engine.ExchangeItem;
 
 public class Mapper implements IMapper {
 
@@ -70,6 +71,7 @@ public class Mapper implements IMapper {
         return this.actors.get(uuid);
     }
 
+    @Override
     public Event moveActor(String uuid, Integer x, Integer y, Integer z) {
         MappedActor actor = this.getActor(uuid);
         actor.move(x,y,z);
@@ -98,7 +100,11 @@ public class Mapper implements IMapper {
                 JSONObject hit = new JSONObject();
                 hit.put("type", "source");
                 hit.put("id", s.getUUID().toString());
-
+                System.out.println("source hit");
+                if (s.getamount() > 0) {
+                    actor.addToBucket(s.getResourceType(), 1);
+                    s.removeAmount(1);
+                }
                 return new CollisionEvent(eventMessage.toString());
             }
         }
@@ -113,6 +119,11 @@ public class Mapper implements IMapper {
                 hit.put("type", "service");
                 hit.put("id", s.getUUID().toString());
 
+                ExchangeItem item = s.getResourceMap().get(0);
+                if (actor.getBucket().get(item.getInput()) > 0) {
+                    actor.removeFromBucket(item.getInput(), 1);
+                    actor.addToBucket(item.getOutput(), item.getExchangeRate());
+                }
                 return new CollisionEvent(eventMessage.toString());
             }
         }
@@ -139,6 +150,7 @@ public class Mapper implements IMapper {
         }
     }
 
+    @Override
     public MappedActor addActor(String name, Integer bucketCapacity) {
         MappedActor actor = new MappedActor(this.getPos("x") , this.getPos("y"), this.getPos("z"), bucketCapacity, name) ;
         this.actors.put(actor.getUUID().toString(), actor);

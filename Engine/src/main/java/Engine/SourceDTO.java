@@ -5,7 +5,7 @@ import Engine.Mapping.ISource;
 public class SourceDTO implements ISource {
 
     private final String resourceType;
-    private final Integer amount;
+    private Integer amount;
 
     public SourceDTO(String resourceType, Integer amount) {
 
@@ -21,5 +21,12 @@ public class SourceDTO implements ISource {
     @Override
     public String getResourceType() {
         return this.resourceType;
+    }
+
+    @Override
+    public Integer removeAmount(Integer amount) {
+        this.amount -= amount;
+        this.amount = (this.amount < 0)? 0 : this.amount;
+        return this.amount;
     }
 }

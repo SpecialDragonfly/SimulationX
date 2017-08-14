@@ -1,6 +1,7 @@
 package Engine.Mapping;
 
 import Engine.ServiceDTO;
+import Engine.Events.Event;
 
 public interface IMapper {
 
@@ -10,4 +11,8 @@ public interface IMapper {
     void removeService(ServiceDTO x);
 
     IMappedService getServiceByUUID(String uuid) throws Exception;
+
+    MappedActor addActor(String name, Integer bucketCapacity);
+
+    public Event moveActor(String uuid, Integer x, Integer y, Integer z);
 }

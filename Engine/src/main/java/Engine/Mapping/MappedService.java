@@ -3,6 +3,7 @@ package Engine.Mapping;
 import Engine.ExchangeItem;
 
 import java.util.*;
+import java.lang.Integer;
 
 public class MappedService implements IMappedService {
     private final UUID uniqueId;
@@ -26,6 +27,18 @@ public class MappedService implements IMappedService {
 
     public HashMap<String, Integer> getCoOrdinates() {
         return this.coOrdinates;
+    }
+
+    public String getResourceType() {
+        return "";
+    }
+
+    public Integer getamount() {
+        return 0;
+    }
+
+    public Integer removeAmount(Integer amount) {
+        return 0;
     }
 
     @Override

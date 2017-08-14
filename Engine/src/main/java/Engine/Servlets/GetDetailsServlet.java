@@ -50,7 +50,6 @@ public class GetDetailsServlet extends HttpServlet {
             bucketArray.put(bucketItem);
         }
 
-
         ArrayList<IMappedSource> sources = map.getSources();
         ArrayList<IMappedSink> sinks = map.getSinks();
         ArrayList<IMappedService> services = map.getServices();
@@ -123,6 +122,7 @@ public class GetDetailsServlet extends HttpServlet {
         }
 
         json.put("map", mapDetails);
+        json.put("bucket",bucketArray);
         json.put("services", serviceArray);
         json.put("actors", actorArray);
         json.put("sources", sourceArray);

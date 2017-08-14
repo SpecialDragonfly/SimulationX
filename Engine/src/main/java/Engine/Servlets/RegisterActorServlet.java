@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
+import java.util.UUID;
+import org.json.JSONObject;
 
 public class RegisterActorServlet extends HttpServlet {
 
@@ -19,7 +21,9 @@ public class RegisterActorServlet extends HttpServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public void doPost(
+        HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse
+    ) throws IOException {
         /*
         { name: "", bucket_capacity: int }
         returns { uuid, x, y, z }
@@ -30,7 +34,8 @@ public class RegisterActorServlet extends HttpServlet {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        this.queue.push(new RegisterActorEvent(body));
+
+        this.queue.push(new RegisterActorEvent(body, httpServletResponse));
     }
 
     private String getBody(HttpServletRequest request) {

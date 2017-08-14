@@ -43,9 +43,9 @@ public class MappedActor implements IMapped {
 
     public void addToBucket(String resourceType, Integer numberOfItems) {
 
-        if((numberOfItems + this.getCurrentBucketSize()) > this.bucketCapacity) {
-            return;
-        }
+        //if((numberOfItems + this.getCurrentBucketSize()) > this.bucketCapacity) {
+        //    return;
+        //}
 
         if(this.bucket.containsKey(resourceType)) {
             numberOfItems += this.bucket.get(resourceType);

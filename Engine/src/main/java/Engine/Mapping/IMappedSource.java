@@ -8,4 +8,5 @@ public interface IMappedSource extends IMapped {
     Integer getamount();
     String getResourceType();
     UUID getUUID();
+    Integer removeAmount(Integer amount);
 }

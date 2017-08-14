@@ -33,7 +33,11 @@ public class Queue {
         this.subscribedStrategies.forEach(
             (subEvent, strategy) -> {
                 if (event.getClass().getSimpleName().equals(subEvent)) {
-                    strategy.handle(event);
+                    try {
+                        strategy.handle(event);
+                    } catch (java.io.IOException e) {
+                        System.out.println("Exception");
+                    }
                 }
             }
         );

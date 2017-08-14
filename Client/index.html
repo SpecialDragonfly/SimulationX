@@ -27,7 +27,7 @@
             popup.style.visibility = "visible";
 
             if (object.type === "service") {
-                popup.innerHTML = "Service<BR>Buy: 1 "+object.buy+"<BR>Sell: "+object.exchange+" "+object.sell+"<BR>Availability: "+object.amount;
+                popup.innerHTML = "Service<BR>Buy: 1 "+object.buy+"<BR>Sell: "+object.exchange+" "+object.sell;
             } else if (object.type === "source") {
                 popup.innerHTML = "Source<BR>Resource: "+object.resource+"<BR>Availability: "+object.amount;
             }
@@ -41,15 +41,23 @@
         let register = function() {
             actorName = document.getElementById("actor-name").value;
             server = document.getElementById("server").value;
-            fetch("http://"+server+"/register", {
+            fetch("http://"+server+"/register_actor", {
                 method: 'POST',
                 mode: 'cors',
-                body: JSON.stringify( { name : actorName} )
+                body: JSON.stringify( { name : actorName, bucket_capacity:5} )
             }).then(function (response) {
                 return response.json();
             }).then(function (actor) {
                 actorId = actor.id;
                 init();
+            });
+        };
+
+        let move = function(x,y) {
+            fetch("http://"+server+"/move", {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify( { id: actorId, x : x, y : y, z : 0} )
             });
         };
 
@@ -79,7 +87,7 @@
                         }).then(function (response) {
                             return response.json();
                         }).then(function (mapResponse) {
-
+                            console.log(mapResponse);
                             let mapWidth = mapResponse.map.width;
                             let mapHeight = mapResponse.map.height;
 
@@ -93,8 +101,7 @@
                                     type: "service",
                                     buy: el.buy,
                                     sell: el.sell,
-                                    exchange: el.exchange_rate,
-                                    amount: el.amount
+                                    exchange: el.amount
                                 };
                             });
 
@@ -106,7 +113,8 @@
                                     amount: el.amount
                                 };
                             });
-
+                            actorX = mapResponse.x;
+                            actorY = mapResponse.y;
                             playerMap[mapResponse.x][mapResponse.y] = 0;
                             mapResponse.actors.forEach(function (el) {
                                 playerMap[el.x][el.y] = 0;
@@ -141,16 +149,28 @@
                                         switch (pressed) {
                                             // Move player
                                             case 40:
-                                                if (actorY < mapHeight - 1) actorY++;
+                                                if (actorY < mapHeight - 1) {
+                                                    actorY++;
+                                                    move(actorX, actorY);
+                                                }
                                                 break;
                                             case 38:
-                                                if (actorY > 0) actorY--;
+                                                if (actorY > 0) {
+                                                    actorY--;
+                                                    move(actorX, actorY);
+                                                }
                                                 break;
                                             case 39:
-                                                if (actorX < mapWidth - 1) actorX++;
+                                                if (actorX < mapWidth - 1) {
+                                                    actorX++;
+                                                    move(actorX, actorY);
+                                                }
                                                 break;
                                             case 37:
-                                                if (actorX > 0) actorX--;
+                                                if (actorX > 0) {
+                                                    actorX--;
+                                                    move(actorX, actorY);
+                                                }
                                                 break;
                                             case 65:
                                                 playerLayer.setZoom("in");

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.ArrayList;
+import Engine.ExchangeItem;
 
 public class GetStatusServlet extends HttpServlet {
     private EngineStrategy strategy;
@@ -48,13 +50,12 @@ public class GetStatusServlet extends HttpServlet {
 
     private String serviceStatusSuccess(IMappedService service) {
         JSONObject status = new JSONObject();
-        HashMap<HashMap<String, String>, Integer> resources = service.getResourceMap();
-        resources.forEach((resource, exchangeRate) -> {
+        ArrayList<ExchangeItem> resources = service.getResourceMap();
+        resources.forEach((resource) -> {
             JSONObject item = new JSONObject();
-            resource.forEach((input, output) -> {
-                item.put("input", input).put("output", output);
-            });
-            item.put("exchange_rate", exchangeRate);
+            item.put("input",resource.getInput());
+            item.put("output",resource.getOutput());
+            item.put("exchange_rate",resource.getExchangeRate());
             item.put("volume", 0);
             status.append("inventory", item);
         });

@@ -37,4 +37,9 @@ public class MappedSource implements IMappedSource {
     public HashMap<String, Integer> getCoOrdinates() {
         return this.coOrdinates;
     }
+
+    @Override
+    public Integer removeAmount(Integer amount) {
+        return this.source.removeAmount(amount);
+    }
 }
