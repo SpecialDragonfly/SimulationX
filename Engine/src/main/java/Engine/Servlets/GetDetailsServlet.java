@@ -118,6 +118,7 @@ public class GetDetailsServlet extends HttpServlet {
             actorObject.put("x", coordinates.get("x"));
             actorObject.put("y", coordinates.get("y"));
             actorObject.put("z", coordinates.get("z"));
+            actorObject.put("name", mappedActor.getName());
             actorArray.put(actorObject);
         }
 

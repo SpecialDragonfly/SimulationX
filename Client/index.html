@@ -30,6 +30,8 @@
                 popup.innerHTML = "Service<BR>Buy: 1 "+object.buy+"<BR>Sell: "+object.exchange+" "+object.sell;
             } else if (object.type === "source") {
                 popup.innerHTML = "Source<BR>Resource: "+object.resource+"<BR>Availability: "+object.amount;
+            } else if (object.type === 'actor') {
+                popup.innerHTML = object.name;
             }
         };
 
@@ -116,8 +118,16 @@
                             actorX = mapResponse.x;
                             actorY = mapResponse.y;
                             playerMap[mapResponse.x][mapResponse.y] = 0;
+                            serviceCoords[mapResponse.x + "-" + mapResponse.y] = {
+                                type: "actor",
+                                name: actorName
+                            };
                             mapResponse.actors.forEach(function (el) {
                                 playerMap[el.x][el.y] = 0;
+                                serviceCoords[el.x + "-" + el.y] = {
+                                    type: "actor",
+                                    name: el.name
+                                };
                             });
 
                             mapResponse.bucket.forEach(function (res) {
@@ -417,7 +427,7 @@
                 <span>Player Name</span>
                 <input type="text" id="actor-name">
                 <span>Server</span>
-                <input type="text" id = "server" value="127.0.0.1:8090">
+                <input type="text" id = "server" value="10.7.4.129:8005">
                 <div id = "register-button" onclick="register()">Register</div>
             </div>
         </div>

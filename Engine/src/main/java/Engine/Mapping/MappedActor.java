@@ -71,4 +71,8 @@ public class MappedActor implements IMapped {
 
         return numItems;
     }
+
+    public String getName() {
+        return this.name;
+    }
 }
