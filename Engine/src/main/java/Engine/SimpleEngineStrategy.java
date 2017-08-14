@@ -5,6 +5,8 @@ import Engine.Mapping.IMapper;
 import Engine.Mapping.IService;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -15,11 +17,13 @@ import java.util.HashMap;
 /**
  * Creates a singular instance of any Sink/Source/Service that it knows about
  */
+@Service
 public class SimpleEngineStrategy implements EngineStrategy {
 
     private final IMapper mapper;
     private ArrayList<ServiceDTO> serviceDTOArray;
 
+    @Autowired
     public SimpleEngineStrategy(IMapper mapper) {
         this.mapper = mapper;
         serviceDTOArray = new ArrayList<ServiceDTO>();
@@ -56,7 +60,7 @@ public class SimpleEngineStrategy implements EngineStrategy {
     }
 
     public void handle(Event event) {
-        System.out.println("The Simple Engine strategy has taken an item off the queue");
+        System.out.println("The Simple XEngine strategy has taken an item off the queue");
         String serviceJSON = event.getMessage();
         System.out.println(serviceJSON);
         JSONObject jsonObject = new JSONObject(serviceJSON);

@@ -1,17 +1,21 @@
 package Engine;
 
 import Engine.Events.Event;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Service
 public class Queue {
     private ConcurrentLinkedQueue<Event> tasks = null;
-    private HashMap<String, Engine> subscribedEngines = null;
+    private HashMap<String, XEngine> subscribedEngines = null;
     private HashMap<String, ArrayList<ServiceDTO>> subscribedEnvironmentObjects = null;
     private HashMap<String, EngineStrategy> subscribedStrategies = null;
 
+    @Autowired
     public Queue() {
         this.tasks = new ConcurrentLinkedQueue<>();
         this.subscribedEngines = new HashMap<>();
@@ -39,7 +43,7 @@ public class Queue {
         );
     }
 
-    public void subscribe(String eventName, Engine engine) {
+    public void subscribe(String eventName, XEngine engine) {
         this.subscribedEngines.put(eventName, engine);
     }
 

@@ -1,20 +1,38 @@
 package Engine.Mapping;
 
 import Engine.ServiceDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+@Service
 public class Mapper implements IMapper {
 
-    private final int width;
-    private final int height;
-    private final int depth;
-    private final HashMap<String, Integer> origin;
+    private  int width;
+    private  int height;
+    private  int depth;
+    private  HashMap<String, Integer> origin;
     private ArrayList<IMappedSource> sources;
     private ArrayList<IMappedSink> sinks;
     private ArrayList<IMappedService> services;
+
+    @Autowired
+    public Mapper()
+    {
+        this.width = 3;
+        this.height = 3;
+        this.depth = 0;
+        this.origin = new HashMap<>();
+        this.origin.put("x", Math.toIntExact(Math.round(width * 0.5)));
+        this.origin.put("y", Math.toIntExact(Math.round(height * 0.5)));
+        this.origin.put("z", Math.toIntExact(Math.round(depth * 0.5)));
+        this.sources = new ArrayList<>();
+        this.sinks = new ArrayList<>();
+        this.services = new ArrayList<>();
+    }
 
     public Mapper(int width, int height, int depth) {
 

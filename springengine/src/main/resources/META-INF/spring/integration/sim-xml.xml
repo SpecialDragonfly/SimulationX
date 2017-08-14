@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/stream
+		http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+
+	<int:gateway id="registration" service-interface="com.wf.spring-engine.engine.Registration"/>
+
+
+	<!-- The router sends different registrations on different paths -->
+	<int:channel id="registrations"/>
+	<int:router input-channel="registrations"  expression="payload.isSource ? 'sources' : 'services'"/>
+
+	<!-- individual order items are processed by the the engine -->
+	<int:channel id="sources">
+		<int:queue capacity="10"/>
+	</int:channel>
+	<int:service-activator input-channel="sources" ref="engine" method="registerSource" output-channel="registeredSources"/>
+
+	<!-- individual registration items are processed by the engine -->
+	<int:channel id="services">
+		<int:queue capacity="10"/>
+	</int:channel>
+	<int:service-activator input-channel="services" ref="engine" method="registerService" output-channel="registeredServices"/>
+
+	<int-stream:stdout-channel-adapter id="registeredSources"/>
+	<int-stream:stdout-channel-adapter id="registeredServices"/>
+
+	<beans:bean id="engine" class="com.wf.spring-engine.engine.xml.Engine"/>
+
+	<int:poller id="poller" default="true" fixed-delay="1000"/>
+
+</beans:beans>
