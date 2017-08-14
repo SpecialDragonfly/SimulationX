@@ -151,16 +151,16 @@ public class Mapper implements IMapper {
     }
 
     @Override
-    public IMappedService getServiceByUUID(String uuid) throws Exception {
+    public IMappedService getServiceByUUID(String uuid) {
         IMappedService service = null;
         for (int i = 0; i < this.services.size(); i++) {
             if (this.services.get(i).getUUID().toString().equals(uuid)) {
                 service = this.services.get(i);
             }
         }
-        if (service == null) {
-            throw new Exception("No Service found");
-        }
+//        if (service == null) {
+//            throw new Exception("No Service found");
+//        }
         return service;
     }
 

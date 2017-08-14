@@ -1,0 +1,13 @@
+{
+  "id": "actors uuid",
+  "bucket": [
+    {
+      "type": "wood",
+      "amount": 100
+    },
+    {
+      "type": "coin",
+      "amount": 250
+    }
+  ]
+}

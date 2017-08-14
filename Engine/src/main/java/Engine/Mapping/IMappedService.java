@@ -12,4 +12,5 @@ public interface IMappedService extends IMappedSink, IMappedSource{
     Set<String> getInputs();
     UUID getUUID();
     ArrayList<ExchangeItem> getResourceMap();
+    String getActionUrl();
 }

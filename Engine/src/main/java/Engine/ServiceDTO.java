@@ -23,18 +23,18 @@ public class ServiceDTO implements IService {
     }
 
     public String getActionUrl() {
-        return actionUrl;
+        return this.actionUrl;
     }
 
     public String getStatusUrl() {
-        return statusUrl;
+        return this.statusUrl;
     }
 
     public String getHealthcheckUrl() {
-        return healthcheckUrl;
+        return this.healthcheckUrl;
     }
 
     public ArrayList<ExchangeItem> getResourceMap() {
-        return resourceMap;
+        return this.resourceMap;
     }
 }

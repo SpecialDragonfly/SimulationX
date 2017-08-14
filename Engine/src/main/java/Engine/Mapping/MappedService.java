@@ -28,6 +28,10 @@ public class MappedService implements IMappedService {
         return this.coOrdinates;
     }
 
+    public String getActionUrl() {
+        return this.service.getActionUrl();
+    }
+
     @Override
     public Set<String> getInputs() {
         Set<String> inputs = new HashSet<>();
@@ -36,6 +40,16 @@ public class MappedService implements IMappedService {
         }
 
         return inputs;
+    }
+
+    @Override
+    public Integer getamount() {
+        return null;
+    }
+
+    @Override
+    public String getResourceType() {
+        return null;
     }
 
     @Override

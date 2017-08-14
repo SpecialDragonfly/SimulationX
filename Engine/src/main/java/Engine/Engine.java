@@ -31,7 +31,7 @@ public class Engine implements Runnable, QueueListener {
         this.tickLimit = tickLimit;
         ArrayList<ISource> sources = new ArrayList<>();
         sources.add(new SourceDTO("wood", 100));
-        this.engineStrategy = new SimpleEngineStrategy(new Mapper(3, 3, 0), sources);
+        this.engineStrategy = new SimpleEngineStrategy(new Mapper(3, 3, 0), sources, this.queue);
     }
 
     public void handle(Event event) {
@@ -43,6 +43,9 @@ public class Engine implements Runnable, QueueListener {
     public void run() {
         this.queue.subscribe("TickEvent", this);
         this.queue.subscribe("TickEvent", this.engineStrategy);
+        this.queue.subscribe("MoveEvent", this.engineStrategy);
+        this.queue.subscribe("CollisionEvent", this.engineStrategy);
+        this.queue.subscribe("UpdateActorEvent", this.engineStrategy);
         this.registrationQueue.subscribe("RegisterEvent", this.engineStrategy);
 
         StatusServer statusServer = new StatusServer(new Server(8005));

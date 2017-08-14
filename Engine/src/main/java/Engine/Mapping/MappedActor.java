@@ -4,7 +4,7 @@ import java.util.*;
 
 public class MappedActor implements IMapped {
     private final UUID uniqueId;
-    private final HashMap<String, Integer> bucket;
+    private HashMap<String, Integer> bucket;
     private final Integer bucketCapacity;
     private final String name;
     private HashMap<String,Integer> coOrdinates;
@@ -38,7 +38,11 @@ public class MappedActor implements IMapped {
     }
 
     public HashMap<String, Integer> getBucket() {
-        return bucket;
+        return this.bucket;
+    }
+
+    public void setBucket(HashMap<String, Integer> bucket) {
+        this.bucket =  bucket;
     }
 
     public void addToBucket(String resourceType, Integer numberOfItems) {

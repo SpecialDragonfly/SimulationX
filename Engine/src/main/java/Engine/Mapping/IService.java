@@ -7,4 +7,5 @@ import java.util.HashMap;
 
 public interface IService {
     ArrayList<ExchangeItem> getResourceMap();
+    String getActionUrl();
 }

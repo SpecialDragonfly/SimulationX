@@ -1,5 +1,6 @@
 package Engine.Mapping;
 
+import Engine.Events.Event;
 import Engine.ServiceDTO;
 
 public interface IMapper {
@@ -9,5 +10,9 @@ public interface IMapper {
 
     void removeService(ServiceDTO x);
 
-    IMappedService getServiceByUUID(String uuid) throws Exception;
+    IMappedService getServiceByUUID(String uuid);
+
+    Event moveActor(String uuid, Integer x, Integer y, Integer z);
+
+    MappedActor getActor(String uuid);
 }
